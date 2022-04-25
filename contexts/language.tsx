@@ -1,6 +1,5 @@
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { ScriptProps } from "next/script";
-import { LargeNumberLike } from "crypto";
 
 const LanguageContext = createContext(undefined)
 
@@ -12,6 +11,7 @@ export function LanguageProvider({ children }: ScriptProps) {
 
     return (
         <LanguageContext.Provider
+            //@ts-expect-error
             value={{
                 lang, setLang,
             }}>
@@ -21,6 +21,7 @@ export function LanguageProvider({ children }: ScriptProps) {
 }
 
 export function useLanguage() {
+    //@ts-expect-error
     const context = useContext<{ lang: number, setLang: Dispatch<SetStateAction<number>> }>(LanguageContext)
 
     if (!context)
