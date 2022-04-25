@@ -1,0 +1,27 @@
+.select-class {
+    font-size: 1.3em;
+}
+
+.marks {
+    width: 60%;
+    display: grid;
+    justify-content: center;
+}
+
+.mark {
+    font-size: 1.1em;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.mark-caption {
+    width: 10em;
+    margin-right: 1em;
+}
+
+.mark-mark {
+    width: 30%;
+    text-align: center;
+}
