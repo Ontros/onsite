@@ -16,6 +16,10 @@
     flex-direction: row;
 }
 
+.mark:hover {
+    cursor: pointer;
+}
+
 .mark-caption {
     width: 10em;
     margin-right: 1em;
@@ -24,4 +28,9 @@
 .mark-mark {
     width: 30%;
     text-align: center;
+}
+
+.highlighted {
+    background-color: lightgray;
+    border-radius: 1em;
 }

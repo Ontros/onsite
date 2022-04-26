@@ -30,6 +30,7 @@ const Bakalari: NextPage<bakalariProps> = ({ langCookie }) => {
     const [maxPointsInput, setMaxPointsInput] = useState(0)
     const [weightInput, setWeightInput] = useState(0)
     const [average, setAverage] = useState("")
+    const [highlitedID, setHiglightedID] = useState(-1)
     useEffect(() => {
         if (url) {
             fetchBakalari(accessToken, url + 'api/3/marks').then(data => {
@@ -78,6 +79,7 @@ const Bakalari: NextPage<bakalariProps> = ({ langCookie }) => {
                 <p>{Lang(lang, ["Subject", "Předmět"])}</p>
                 <select name="Subject" id="" className='select-class' onChange={(e) => {
                     setSubjectID(parseInt(e.target.value));
+                    setHiglightedID(-1)
                     var MarksJSON = marksJSON?.Subjects[parseInt(e.target.value)].Marks
                     if (!MarksJSON) {
                         return
@@ -108,14 +110,25 @@ const Bakalari: NextPage<bakalariProps> = ({ langCookie }) => {
                 </select>
                 <div className="marks">
                     {onMarks?.map((mark, id) => {
+                        function removeOnMark() {
+                            if (onMarks) {
+                                setHiglightedID(id)
+                                setWeightInput(onMarks[id].weight)
+                                setMarkInput(onMarks[id].mark)
+                                //@ts-expect-error
+                                setMaxPointsInput(onMarks[id].maxPoints)
+                                if (typeof onMarks[id].maxPoints === "number") {
+                                }
+                            }
+                        }
                         return (
                             !mark.isPoints ?
-                                <div className='mark'>
+                                <div onClick={removeOnMark} className={`mark ${highlitedID === id ? "highlighted" : ""}`}>
                                     <div className="mark-caption">{mark.name}</div>
                                     {" "}
                                     <div className="mark-mark">{!mark.mark ? "N" : mark.mark}</div>
                                 </div> :
-                                <div className='mark'>
+                                <div onClick={removeOnMark} className={`mark ${highlitedID === id ? "highlighted" : ""}`}>
                                     <div className="mark-caption">{mark.name}</div>
                                     {" "}
                                     <div className="mark-mark">
@@ -136,7 +149,7 @@ const Bakalari: NextPage<bakalariProps> = ({ langCookie }) => {
                     {usingPoints && (<>
                         /
                         <label htmlFor="maxPoints">Max Points</label>
-                        <input id="maxPoints" type="number" onInput={(e) => {
+                        <input id="maxPoints" value={maxPointsInput} type="number" onInput={(e) => {
                             //@ts-expect-error
                             setMaxPointsInput(parseInt(e.target.value))
                         }} />
@@ -144,7 +157,7 @@ const Bakalari: NextPage<bakalariProps> = ({ langCookie }) => {
                     )}
                     <br />
                     <label htmlFor="weight">Weight</label>
-                    <input id="weight" type="number" onInput={(e) => {
+                    <input id="weight" type="number" value={weightInput} onInput={(e) => {
                         //@ts-expect-error
                         setWeightInput(parseInt(e.target.value))
                     }} />
@@ -156,10 +169,21 @@ const Bakalari: NextPage<bakalariProps> = ({ langCookie }) => {
                             return
                         }
 
-                        marksLocal.push({ mark: markInput, isPoints: usingPoints, name: `Mark ${marksLocal.length + 2}`, weight: weightInput, maxPoints: maxPointsInput })
-                        console.log("marksLocal", marksLocal)
+                        if (highlitedID === -1) {
+                            marksLocal.push({ mark: markInput, isPoints: usingPoints, name: `Mark ${marksLocal.length + 2}`, weight: weightInput, maxPoints: maxPointsInput })
+                            console.log("marksLocal", marksLocal)
+                        }
+                        else {
+                            marksLocal[highlitedID].mark = markInput
+                            marksLocal[highlitedID].weight = weightInput
+                            marksLocal[highlitedID].maxPoints = maxPointsInput
+                        }
 
                         setOnMarks(marksLocal)
+                        setMarkInput(0)
+                        setMaxPointsInput(0)
+                        setWeightInput(0)
+                        setHiglightedID(-1)
                         calculateAverage(marksLocal)
                     }}>Submit</button>
                 </form>
