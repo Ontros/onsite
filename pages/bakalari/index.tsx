@@ -37,7 +37,7 @@ const Bakalari: NextPage<bakalariProps> = ({ langCookie }) => {
                 }}>Login</button>
                 <button onClick={() => {
                     router.push("/bakalari/predictor/")
-                }}>Predictoe</button>
+                }}>Predictor</button>
                 <button onClick={() => {
                     localStorage.setItem('bakalariAccessToken', '')
                 }}>Logout</button>
