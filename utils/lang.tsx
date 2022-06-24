@@ -1,8 +1,10 @@
 //2.1.2021
 
-import FlagCZ from '../public/cz.svg'
-import FlagGB from '../public/gb.svg'
+import FlagCZ from '/public/cz.svg'
+import FlagGB from '/public/gb.svg'
 import Image from 'next/image'
+
+import styles from '../styles/Lang.module.css';
 
 function Lang(lang: number, array: string[]): string {
     if (array.length === 1) {
@@ -35,11 +37,16 @@ function LanguageSelect(props: LangProps) {
     ]
 
     return (
-        <div className="language-selection" onClick={() => {
+        <div className={styles.languageSelection} onClick={() => {
             setLang(lang < languages.length - 1 ? lang + 1 : 0)
         }
         }>
-            <Image height={"1.25em"} width={"3em"} src={languages[lang].flag} alt="Flag" className='flag' />
+            <div className={styles.flagContainer}>
+                <Image src={languages[lang].flag}
+                    alt="Flag"
+                    objectFit='contain'
+                    layout='fill' />
+            </div>
             {languages[lang].name}
         </div>
     )
