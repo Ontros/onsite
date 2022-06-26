@@ -1,0 +1,131 @@
+/*----------------------------------General things----------------------------------*/
+
+/* html {
+  overflow: hidden;
+  height: 100%;
+} */
+
+.closeContainer {
+	position: relative;
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.close {
+  cursor: pointer;
+  /* Sets the color to white */
+  filter: invert(100%);
+  opacity: 0.85;
+}
+
+.close:hover {
+  opacity: 0.6;
+}
+.App {
+  text-align: center;
+  background-color: var(--dark2);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 35px;
+  color: white;
+  /* From html */
+  overflow: hidden;
+  height: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 3em;
+  margin-right: 3em;
+  max-width: 80%;
+}
+
+.questionImage {
+  height: 40vh;
+  max-width: 75vw;
+}
+
+.zadani {
+  text-align: left;
+}
+
+.selectionRow {
+  display:flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.firstSelectionRow {
+  justify-content: space-between;
+}
+
+.lastSelectionRow {
+  margin-top: .4em;
+  justify-content: flex-start;
+}
+
+.resultText {
+  margin-left: .4em;
+  white-space: initial;
+}
+
+.correctness-true {
+  color: green;
+}
+
+.correctness-false {
+  color: red;
+}
+.textInputTitle {
+  font-size: 1.1em;
+  text-align: left;
+}
+
+
+.settingsContainerWindow {
+  position: absolute;
+  margin: 0;
+  top: 0;
+  left: 0;
+  background-color: var(--dark1);
+  padding: 0em;
+  width: 100%;
+  height: 100%;
+  opacity: 0.95;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+.settingsContainer {
+  display: block;
+  margin: 1em;
+  width: calc(100%-1em);
+  height: calc(100%-1em);
+}
+
+@media only screen and (min-width: 60em) {
+  /* settings becomes a window */
+.settingsContainerWindow {
+    border-radius: .8em;
+    width: max(50%,20em);
+    height: min-content;
+    max-height: 80%;
+    padding: .5em;
+    left:50vw;
+    top: 50vh;
+    transform: translate(calc(-50% + .4px),calc(-50% + .4px)); /*Chrome is weird*/
+  }
+
+  /*----------------------------------settins animaiton----------------------------------*/
+  
+}
+
+.settings-close-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

@@ -4,14 +4,117 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
   Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  color: white;
 }
 
+:root {
+  color-scheme: dark;
+  --dark1: #0d0e0f;
+  --dark2: #282c34;
+  --dark3: #35373a;
+  --dark4: #515358;
+  --dark5: #6e7074;
+  --popup-bezier: cubic-bezier(.42,.12,.38,1.37);
+}
+.radio-container {
+  display: flex; 
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  user-select: none;
+}
+.settings-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: .2em 0;
+}
+
+.text-input {
+  background-color: var(--dark5);
+  color: var(--dark1);
+  border: 0;
+  border-radius: .3em;
+  font-size: 1em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+input {
+  color: var(--dark1);
+}
+
+button {
+  border: 0;
+  border-radius: .35em;
+  background-color: var(--dark5);
+  font-size: 1em;
+  padding: .25em;
+  user-select: none;
+  color: var(--dark1);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+button:hover{
+  cursor: pointer;
+  background-color: var(--dark4);
+}
+
+button:active {
+  background-color: var(--dark3);
+}
+
+button-clear {
+  background-color: var(--dark2);
+}
+
+.radio {
+  margin-right: .5em; 
+}
+
+.from-to {
+  display: flex;
+  flex-direction: row;
+  max-width: initial;
+  width: min(50em, 80%);
+}
+
+.num-selection {
+  background-color: var(--dark5);
+  border: none;
+  margin: .4em;
+  width: 4em;
+  flex-grow: 1;
+  font-size: 1em;
+  border-radius: 10px;
+}
 a {
   color: inherit;
   text-decoration: none;
   font-size: 20px;
 }
 
+.space-between {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.space-around {
+  align-items: center;
+  justify-content: space-around;
+}
 * {
   box-sizing: border-box;
 }
@@ -108,7 +211,7 @@ button:hover {
   font-size: 1.5rem;
 }
 
-button {
+/* button {
   border-radius: 5px;
   background-color: #fff;
   transition: color 0.15s ease, border-color 0.15s ease;
@@ -117,4 +220,4 @@ button {
 button:hover, button:focus, button:active {
   color: #0070f3;
   border-color: #0070f3;
-}
+} */
