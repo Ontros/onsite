@@ -102,13 +102,43 @@ a {
   justify-content: space-between;
 }
 
+.flex {
+  display: flex;
+}
+
 .flex-grow {
   flex-grow: 1;
+}
+
+.radio-button {
+  border: .15em solid var(--dark5);
+  background-color: var(--dark1);
+  color: white;
+}
+
+.radio-button:hover {
+  background-color: var(--dark2);
+}
+
+.radio-button:active {
+  background-color: var(--dark3);
+}
+
+.radio-button-selected {
+  border-color: blue;
 }
 
 .flex-center {
   align-items: center;
   justify-content: center;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
 }
 
 .space-around {
