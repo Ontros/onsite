@@ -61,13 +61,6 @@ const Index: NextPage<f1Props> = ({ langCookie }) => {
                     "Ano", "Ne"
                 ],
                 selectedAnswer: 0
-            },
-            {
-                question: "Dojede Charles Formula 1 Lenovo British Grand Prix 2022?",
-                answers: [
-                    "Ano", "Ne"
-                ],
-                selectedAnswer: 0
             }
         ]
     )
