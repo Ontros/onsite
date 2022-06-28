@@ -3,14 +3,17 @@ import '../styles/bakalari.css'
 import type { AppProps } from 'next/app'
 import Head from '../utils/Head'
 import { LanguageProvider } from '../contexts/language'
+import { SessionProvider } from 'next-auth/react'
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <>
-      <LanguageProvider>
-        <Head></Head>
-        <Component {...pageProps} />
-      </LanguageProvider>
+      <SessionProvider session={session}>
+        <LanguageProvider>
+          <Head></Head>
+          <Component {...pageProps} />
+        </LanguageProvider>
+      </SessionProvider>
     </>
 
   )

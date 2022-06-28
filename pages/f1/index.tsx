@@ -1,7 +1,9 @@
 import { NextPage } from "next"
+import { signIn, signOut, useSession } from "next-auth/react"
 import { useState } from "react"
 import { useLanguage } from '../../states/useLanguage'
 import styles from '../../styles/f1.module.css'
+import Image from 'next/image'
 
 interface f1Props {
     langCookie: string
@@ -79,9 +81,24 @@ const Index: NextPage<f1Props> = ({ langCookie }) => {
 
     console.log("f", selectedArray)
 
+    const { data: session } = useSession()
+
     return (
         <div className="flex flex-column flex-center">
             <h1 className={styles["title"]}>Formulky</h1>
+            <div>
+                {session?.user?.email}
+                <br />
+                {session?.user?.name}
+                <br />
+                {session?.user?.image ? <Image src={session?.user?.image}
+                    alt="Profile Pic" height={200} width={200}
+                /> : ""}
+                <br />
+                <button onClick={() => { signIn() }}>Log in</button>
+                <br />
+                <button onClick={() => { signOut() }}>Log out</button>
+            </div>
             <div className={styles["questionsContainer"]}>
                 {questions.map((question, index) => {
                     return (
