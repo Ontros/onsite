@@ -4,66 +4,25 @@ import { useState } from "react"
 import { useLanguage } from '../../states/useLanguage'
 import styles from '../../styles/f1.module.css'
 import Image from 'next/image'
+import prisma from '../../utils/prisma'
+import Link from "next/link"
 
-interface f1Props {
-    langCookie: string
-}
 //NOTE: button color based on team color
 interface Question {
     question: string,
     answers: string[],
-    selectedAnswer: number
+    selectedAnswer: number,
+    endTime: String
 }
 
-const Index: NextPage<f1Props> = ({ langCookie }) => {
+interface f1Props {
+    langCookie: string
+    dbQuestions: Question[]
+}
+const Index: NextPage<f1Props> = ({ langCookie, dbQuestions }) => {
     // const { lang, setLang } = useLanguage(langCookie)
     const [selectedArray, setSelectedArray] = useState<number[]>([0])
-    const [questions, setQuestions] = useState<Question[]>(
-        [
-            {
-                question: "Dojede Charles Formula 1 Lenovo British Grand Prix 2022?",
-                answers: [
-                    "Ano", "Ne"
-                ],
-                selectedAnswer: 0
-            },
-            {
-                question: "Dojede Charles Formula 1 Lenovo British Grand Prix 2022?",
-                answers: [
-                    "Ano", "Ne", "Možná", "Projede", "Vyjede", "Odjede", "Zajede"
-                ],
-                selectedAnswer: 0
-            },
-            {
-                question: "Dojede Charles Formula 1 Lenovo British Grand Prix 2022?",
-                answers: [
-                    "Ano", "Ne"
-                ],
-                selectedAnswer: 0
-            },
-            {
-                question: "Dojede Charles Formula 1 Lenovo British Grand Prix 2022?",
-                answers: [
-                    "Ano", "Ne"
-                ],
-                selectedAnswer: 0
-            },
-            {
-                question: "Dojede Charles Formula 1 Lenovo British Grand Prix 2022?",
-                answers: [
-                    "Ano", "Ne"
-                ],
-                selectedAnswer: 0
-            },
-            {
-                question: "Dojede Charles Formula 1 Lenovo British Grand Prix 2022?",
-                answers: [
-                    "Ano", "Ne"
-                ],
-                selectedAnswer: 0
-            }
-        ]
-    )
+    const [questions, setQuestions] = useState<Question[]>(dbQuestions)
     const classesF = () => {
         return questions.map((que, indexT) => {
             return que.answers.map((ans, indexJT) => { return `${styles['radioButton']} radio-button ${selectedArray[indexT] === indexJT ? "radio-button-selected" : ""}` })
@@ -72,7 +31,7 @@ const Index: NextPage<f1Props> = ({ langCookie }) => {
     const [classes, setClasses] = useState<string[][]>(classesF())
 
 
-    console.log("f", selectedArray)
+    var selectedPredictionID = 1;
 
     const { data: session } = useSession()
 
@@ -91,6 +50,10 @@ const Index: NextPage<f1Props> = ({ langCookie }) => {
                 <button onClick={() => { signIn() }}>Log in</button>
                 <br />
                 <button onClick={() => { signOut() }}>Log out</button>
+                <br />
+                <Link passHref href={"/f1/createQuestion"}>
+                    <button onClick={() => { }}>Create New!</button>
+                </Link>
             </div>
             <div className={styles["questionsContainer"]}>
                 {questions.map((question, index) => {
@@ -120,3 +83,35 @@ const Index: NextPage<f1Props> = ({ langCookie }) => {
     )
 }
 export default Index
+
+export async function getServerSideProps() {
+    //NOTE: change prediction type ID, make it dynamic and stuff, great comment, thanks mate
+    var f1PredictionTypeId = 1
+    const Questions = await prisma.f1Question.findMany({
+        where: { f1PredictionTypeId },
+        select: {
+            title: true,
+            endTime: true,
+            ChoiceTypes: {
+                select: {
+                    title: true
+                }
+            }
+        }
+    })
+    const dbQuestions: Question[] = Questions.map((val) => {
+        return {
+            question: val.title,
+            answers: val.ChoiceTypes.map((value) => {
+                return value.title
+            }),
+            selectedAnswer: 0,
+            endTime: val.endTime.toISOString()
+        }
+    })
+    return {
+        props: {
+            dbQuestions
+        }
+    }
+}

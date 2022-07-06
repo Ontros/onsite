@@ -66,7 +66,6 @@ model F1Prediction {
 model F1PredictionType {
     id              Int                  @id @default(autoincrement())
     name            String
-    endTime         DateTime
     f1Predicitons   F1Prediction[]
     questions       F1Question[]
 }
@@ -77,6 +76,7 @@ model F1Question {
     f1PredictionType    F1PredictionType    @relation(fields: [f1PredictionTypeId],references: [id])
     f1PredictionTypeId  Int
     ChoiceTypes         F1ChoiceType[]
+    endTime             DateTime
 }
 
 model F1Choice {
@@ -85,6 +85,7 @@ model F1Choice {
     choiceTypeId    Int
     prediction      F1Prediction    @relation(fields: [predictionID], references: [id])
     predictionID    String
+    updatedTime     DateTime        @updatedAt
 }
 
 model F1ChoiceType {
