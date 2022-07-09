@@ -20,6 +20,7 @@ const Index: NextPage<f1Props> = ({ langCookie }) => {
     return (
         <div className="flex flex-column flex-center">
             <h1 className={styles["title"]}>Formulky Vytvareni Otazek</h1>
+            {session ? `You are logged in as: ${session?.user?.name}!` : "You are not logged in!"}
             <h3>Otázka:</h3>
             <input value={question} onChange={(event) => { setQuestion(event.target.value) }} type="text" className="text-input" />
             <h3>Konečné datum</h3>
@@ -29,9 +30,6 @@ const Index: NextPage<f1Props> = ({ langCookie }) => {
             <h3>Odpovědi:</h3>
             Ano/Ne
             <br />
-            <Link passHref href={"/f1"}>
-                <button onClick={() => { }}>Go Back!</button>
-            </Link>
             <button onClick={async () => {
                 try {
                     const body = { question, selectedPredictionID, endTime: `${date}T${time}:00.000Z` }
@@ -53,7 +51,10 @@ const Index: NextPage<f1Props> = ({ langCookie }) => {
                 } catch (error) {
                     console.error(error)
                 }
-            }}>Potvrdit</button>
+            }}>Potvrdit vytváření!</button>
+            <Link passHref href={"/f1"}>
+                <button onClick={() => { }}>Go Back to answering!</button>
+            </Link>
         </div>
     )
 }

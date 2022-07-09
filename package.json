@@ -17,6 +17,7 @@
     "next": "12.1.5",
     "next-auth": "^4.7.0",
     "react": "18.0.0",
+    "react-countdown": "^2.3.2",
     "react-dom": "18.0.0"
   },
   "devDependencies": {
