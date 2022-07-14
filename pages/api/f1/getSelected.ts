@@ -19,11 +19,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         // var fds = await questions.forEach(async (question, index) => {
         var choice = await prisma.f1Choice.findFirst({ where: { choiceType: { question: { title: question.question } }, prediction: { userId: prediction.userId } }, include: { choiceType: true } })
         if (choice) {
-            console.log("1", index, result)
             result[index] = question.answers.findIndex((ans) => { return ans.title === choice?.choiceType.title })
         }
         else {
-            console.log("2", index, result)
             result[index] = -1
         }
         index++

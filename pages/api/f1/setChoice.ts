@@ -5,6 +5,9 @@ import prisma from '../../../utils/prisma'
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
     //TODO security lmao
+    var startTime = performance.now()
+
+
     const { choiceTypeId, predictionTypeID, userEmail }: { choiceTypeId: number, predictionTypeID: number, userEmail: string } = req.body
 
     var prediction = await prisma.f1Prediction.findFirst({ where: { user: { email: userEmail } } })
@@ -36,5 +39,8 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         result = await prisma.f1Choice.create({ data: { choiceTypeId: choiceTypeId, predictionID: prediction.id } })
     }
 
+    var endTime = performance.now()
+
+    console.log(`Call to doSomething took ${endTime - startTime} milliseconds`)
     res.json(result)
 }

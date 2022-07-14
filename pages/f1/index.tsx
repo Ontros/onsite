@@ -100,6 +100,9 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions }) => {
                                                     alert("Login first")
                                                     return
                                                 }
+                                                var selectedArrayTemp = selectedArray
+                                                selectedArrayTemp[index] = indexJ
+                                                setSelectedArray(selectedArrayTemp)
                                                 const result = await fetch(`/api/f1/setChoice`, {
                                                     method: 'POST',
                                                     headers: { 'Content-Type': 'application/json' },
@@ -118,9 +121,6 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions }) => {
                                                 }
                                                 else {
                                                     //IF ok
-                                                    var selectedArrayTemp = selectedArray
-                                                    selectedArrayTemp[index] = indexJ
-                                                    setSelectedArray(selectedArrayTemp)
 
                                                     getSelected()
                                                 }
