@@ -1,0 +1,20 @@
+.userProfileContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.avatarContainer {
+    flex-shrink: 0;
+    border-radius: 50%;
+    height: .8em;
+    width: .8em;
+    margin-right: .3em;
+    position: relative;
+}
+
+.userAvatar  {
+    border-radius: 50%;
+}

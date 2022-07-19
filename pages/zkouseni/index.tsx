@@ -5,8 +5,8 @@ import Selection from '../../utils/Selection';
 //@ts-expect-error
 import detectBrowserLanguage from 'detect-browser-language'
 import { Lang } from '../../utils/lang'
-import { NextPage } from 'next';
 import { useLanguage } from '../../states/useLanguage';
+import { NextPage } from 'next';
 var chyba = (code: string) => {
     alert(`Ondřej to zase posral, tohle by mu snad mělo pomoct opravit tento problém: ${code}`)
 }

@@ -71,12 +71,14 @@ model F1PredictionType {
 }
 
 model F1Question {
-    id                  Int              @id @default(autoincrement())
+    id                  Int                 @id @default(autoincrement())
     title               String
     f1PredictionType    F1PredictionType    @relation(fields: [f1PredictionTypeId],references: [id])
     f1PredictionTypeId  Int
-    ChoiceTypes         F1ChoiceType[]
+    ChoiceTypes         F1ChoiceType[]      @relation("choicetypes")
     endTime             DateTime
+    correctChoice       F1ChoiceType?       @relation("correctchoicetype", fields: [correctChoiceID], references: [id])
+    correctChoiceID     Int                 @unique
 }
 
 model F1Choice {
@@ -91,7 +93,8 @@ model F1Choice {
 model F1ChoiceType {
     id          Int          @id @default(autoincrement())
     title       String
-    question    F1Question      @relation(fields: [questionID], references: [id])
+    question    F1Question      @relation("choicetypes",fields: [questionID], references: [id])
     questionID  Int
-    choices     F1Choice[]
+    correctQuestion F1Question?  @relation("correctchoicetype")
+    choices     F1Choice[]      @relation()
 }

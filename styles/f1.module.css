@@ -45,3 +45,25 @@
 .radioButton {
     font-size: 22px;
 }
+
+.nav {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navSideElement {
+    width: 20%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.hamburger {
+    cursor: pointer;
+    filter: invert(100%);
+    margin-left: 10em;
+}
