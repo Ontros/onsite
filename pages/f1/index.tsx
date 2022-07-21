@@ -11,6 +11,7 @@ import Countdown from "react-countdown"
 import { Lang, LanguageSelect } from '../../utils/lang'
 import UserProfile from "../../utils/UserProfile"
 import hamburger from "../../public/hamburger_icon.svg"
+import { F1PredictionType } from "@prisma/client"
 
 //NOTE: button color based on team color
 export interface Question {
@@ -28,47 +29,81 @@ interface Answer {
 interface f1Props {
     langCookie: string
     dbQuestions: Question[]
+    predictionTypes: F1PredictionType[]
 }
-const Index: NextPage<f1Props> = ({ langCookie, dbQuestions }) => {
+const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) => {
     const { lang, setLang } = useLanguage(langCookie)
     const { data: session } = useSession()
+    const [selectedPredictionID, setRawSelectedPredictionID] = useState(1)
     const [selectedArray, setSelectedArray] = useState<number[]>([])
-    const [questions, setQuestions] = useState<Question[]>(dbQuestions)
+    const [questions, setQuestions] = useState<Question[] | null>(dbQuestions)
+    const [selectingPrediction, setSelectingPrediction] = useState(true)
     //beacause react doesnt update button classes without running this function :)
     const classesF = () => {
+        if (!questions) { return [[]] }
         return questions.map((que, indexT) => {
             return que.answers.map((ans, indexJT) => { return `${styles['radioButton']} radio-button ${selectedArray[indexT] === indexJT ? "radio-button-selected" : ""}` })
         })
     }
     const [classes, setClasses] = useState<string[][]>(classesF())
 
-    useEffect(() => { if (session) { getSelected() } }, [session])
+    useEffect(() => { if (session) { getSelected(selectedPredictionID, questions) } }, [session])
     useEffect(() => { setClasses(classesF()) }, [selectedArray])
+    // useEffect(() => {
+    //     getQuestions()
+    // }, [selectedPredictionID])
+    const setSelectedPredictionID = async (id: number) => {
+        await getQuestions(id)
+    }
 
-    const getSelected = async () => {
-        if (!session?.user?.email) {
-            console.log("Login first to view your predictions", session?.user?.email)
-            return
-        }
-        const result = await fetch(`/api/f1/getSelected`, {
+    const getQuestions = async (id: number) => {
+        const result = await fetch(`/api/f1/getQuestions`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ questions: questions, predictionTypeID: selectedPredictionID, userEmail: session.user.email }),
+            body: JSON.stringify({ predictionTypeID: id }),
         })
         if (!result.ok) {
-            alert("Cannot connect to the dastabase (getSelected)")
+            alert("Cannot connect to the dastabase (getQuestions)")
             console.log("error", result.status)
             var json = await result.json()
             console.log(json)
         }
         else {
+            // alert("success questions")
+            var selec = await result.json()
+            console.log(74, selec)
+            setQuestions(selec)
+            await getSelected(id, selec)
+            setSelectingPrediction(false)
+        }
+    }
+
+    const getSelected = async (id: number, questionsLocal: Question[]) => {
+        if (!session?.user?.email) {
+            console.log("Login first to view your predictions", session?.user?.email)
+            return
+        }
+        if (!questionsLocal) {
+            // alert(" no quest")
+            return
+        }
+        const result = await fetch(`/api/f1/getSelected`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ questions: questionsLocal, predictionTypeID: id, userEmail: session.user.email }),
+        })
+        if (!result.ok) {
+            alert(`Cannot connect to the dastabase (getSelected) ${selectedPredictionID}`)
+            console.log("error", result.status)
+            var json = await result.json()
+            console.log(json)
+        }
+        else {
+            // alert("success sellectet")
             var selec = await result.json()
             setSelectedArray(selec)
         }
-
     }
-
-    var selectedPredictionID = 1;
 
     return (
         <>
@@ -77,72 +112,87 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions }) => {
                     {/* <Image className={styles["hamburger"]} src={hamburger} alt="hamburgermenu" /> */}
                     <LanguageSelect lang={lang} setLang={setLang} />
                 </div>
-                <h1 className={styles["title"]}>Formulky</h1>
+                <h1 onClick={() => { setSelectingPrediction(!selectingPrediction) }}
+                    className={styles["title"]}>
+                    {/* {`F1 - ${predictionTypes.find((val) => { return val.id === selectedPredictionID })?.name}`} */}
+                    {`F1 - ${predictionTypes[selectedPredictionID].name}`}
+                </h1>
                 <div className={styles["navSideElement"]}>
                     <UserProfile session={session} />
                 </div>
             </nav>
             <div className="flex flex-column flex-center">
-                <div className={styles["questionsContainer"]}>
-                    {/* {session ? `You are logged in as: ${session?.user?.name}!` : "You are not logged in!"}
-                    <br />
-                    {session?.user?.image ? <Image src={session?.user?.image}
-                        alt="Profile Pic" height={200} width={200}
-                    /> : ""}
-                    <br />
-                    {session ? <button onClick={() => { signOut() }}>Log out</button> : <button onClick={() => { signIn() }}>Log in</button>}
-                    <br /> */}
-                    <br />
-                    {/* <button style={{ marginBottom: "1.5em" }} onClick={() => { getSelected() }}>Refresh selected answers!</button> */}
-                    {questions.map((question, index) => {
-                        return (
-                            <div key={index} className={`${styles["questionContainer"]}`}>
-                                <div className={styles["question"]}>{question.question}<Countdown className={styles["countdown"]} date={new Date(question.endTime)}></Countdown></div>
-                                <div className={styles["questionButtons"]}>
-                                    {question.answers.map((answer, indexJ) => {
-                                        return (
-                                            <button key={indexJ} className={classes[index][indexJ]}
-                                                onClick={async () => {
+                {!selectingPrediction ?
+                    <div className={styles["questionsContainer"]}>
+                        <br />
+                        {questions?.map((question, index) => {
+                            if (!question || !classes) {
+                                return <></>
+                            }
+                            return (
+                                <div key={index} className={`${styles["questionContainer"]}`}>
+                                    <div className={styles["question"]}>{question.question}<Countdown className={styles["countdown"]} date={new Date(question.endTime)}></Countdown></div>
+                                    <div className={styles["questionButtons"]}>
+                                        {question.answers.map((answer, indexJ) => {
+                                            if (isNaN(indexJ) || !classes[index] || isNaN(index) || !questions) {
+                                                console.log(`missing a${indexJ} b${!classes} c${index}`)
+                                                return <></>
+                                            }
+                                            // return
+                                            // alert(``)
+                                            return (
+                                                <button key={indexJ} className={classes[index][indexJ]}
+                                                    onClick={async () => {
 
-                                                    if (!session?.user?.email) {
-                                                        alert("Login first")
-                                                        return
-                                                    }
-                                                    var selectedArrayTemp = selectedArray
-                                                    selectedArrayTemp[index] = indexJ
-                                                    setSelectedArray(selectedArrayTemp)
-                                                    const result = await fetch(`/api/f1/setChoice`, {
-                                                        method: 'POST',
-                                                        headers: { 'Content-Type': 'application/json' },
-                                                        body: JSON.stringify({ choiceTypeId: answer.id, predictionTypeID: selectedPredictionID, userEmail: session.user.email }),
-                                                    })
-                                                    if (!result.ok) {
-                                                        console.log("error", result.status)
-                                                        var json = await result.json()
-                                                        console.log(json)
-                                                        if (json.message === "Too late") {
-                                                            alert("Too late, unlucky")
+                                                        if (!session?.user?.email) {
+                                                            alert("Login first")
+                                                            return
+                                                        }
+                                                        var selectedArrayTemp = selectedArray
+                                                        selectedArrayTemp[index] = indexJ
+                                                        setSelectedArray(selectedArrayTemp)
+                                                        const result = await fetch(`/api/f1/setChoice`, {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({ choiceTypeId: answer.id, predictionTypeID: selectedPredictionID, userEmail: session.user.email }),
+                                                        })
+                                                        if (!result.ok) {
+                                                            console.log("error", result.status)
+                                                            var json = await result.json()
+                                                            console.log(json)
+                                                            if (json.message === "Too late") {
+                                                                alert("Too late, unlucky")
+                                                            }
+                                                            else {
+                                                                alert("UNKWN ERROR")
+                                                            }
                                                         }
                                                         else {
-                                                            alert("UNKWN ERROR")
+                                                            //IF ok
+                                                            getSelected(selectedPredictionID, questions)
                                                         }
-                                                    }
-                                                    else {
-                                                        //IF ok
-                                                        getSelected()
-                                                    }
-                                                }}>
-                                                {answer.title}
-                                            </button>
-                                        )
-                                    })}
-                                </div>
-                            </div>)
-                    })}
-                    <Link passHref href={"/f1/createQuestion"}>
-                        <button onClick={() => { }}>Create New Question!</button>
-                    </Link>
-                </div>
+                                                    }}>
+                                                    {answer.title}
+                                                </button>
+                                            )
+                                        })}
+                                    </div>
+                                </div>)
+                        })}
+                        <Link passHref href={"/f1/createQuestion"}>
+                            <button onClick={() => { }}>Create New Question!</button>
+                        </Link>
+                    </div> :
+                    //Selecting
+                    <div className={styles["predictionTypeContainer"]}>
+                        {predictionTypes.map((predictionType) => {
+                            return (<div key={predictionType.id} onClick={() => {
+                                // alert(`ok click select -${predictionType.id}`)
+                                setSelectedPredictionID(predictionType.id)
+                            }}>{predictionType.name}</div>)
+                        })}
+                    </div>
+                }
             </div>
         </>
     )
@@ -175,9 +225,11 @@ export async function getServerSideProps() {
             endTime: val.endTime.toISOString()
         }
     })
+    const predictionTypes = await prisma.f1PredictionType.findMany()
     return {
         props: {
-            dbQuestions
+            // dbQuestions,
+            predictionTypes
         }
     }
 }

@@ -16,7 +16,7 @@ const Index: NextPage<f1Props> = ({ langCookie }) => {
     const [date, setDate] = useState("")
     const [time, setTime] = useState("")
     console.log(question, date, time)
-    var selectedPredictionID = 1;
+    var selectedPredictionID = 2;
     return (
         <div className="flex flex-column flex-center">
             <h1 className={styles["title"]}>Formulky Vytvareni Otazek</h1>
