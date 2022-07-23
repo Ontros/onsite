@@ -53,9 +53,6 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
                     console.error(error)
                 }
             }}>Potvrdit vytváření!</button>
-            <Link passHref href={"/f1"}>
-                <button onClick={() => { }}>Go Back to answering!</button>
-            </Link>
         </div>
     )
 }
