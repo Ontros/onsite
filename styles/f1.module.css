@@ -28,6 +28,12 @@
     justify-content: center;
     margin-bottom: 2.3em;
 }
+
+.predictionType {
+    margin-top: .5em;
+    font-size: 2em;
+    cursor: pointer;
+}
 .countdown {
     font-size: .5em;
     align-self: center;

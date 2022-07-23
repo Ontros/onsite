@@ -38,6 +38,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
     const [selectedArray, setSelectedArray] = useState<number[]>([])
     const [questions, setQuestions] = useState<Question[] | null>(dbQuestions)
     const [selectingPrediction, setSelectingPrediction] = useState(true)
+    const [predictionName, setPredictionName] = useState("Select GP!");
     //beacause react doesnt update button classes without running this function :)
     const classesF = () => {
         if (!questions) { return [[]] }
@@ -53,6 +54,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
     //     getQuestions()
     // }, [selectedPredictionID])
     const setSelectedPredictionID = async (id: number) => {
+        setRawSelectedPredictionID(id)
         await getQuestions(id)
     }
 
@@ -78,7 +80,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
         }
     }
 
-    const getSelected = async (id: number, questionsLocal: Question[]) => {
+    const getSelected = async (id: number, questionsLocal: Question[] | null) => {
         if (!session?.user?.email) {
             console.log("Login first to view your predictions", session?.user?.email)
             return
@@ -93,7 +95,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
             body: JSON.stringify({ questions: questionsLocal, predictionTypeID: id, userEmail: session.user.email }),
         })
         if (!result.ok) {
-            alert(`Cannot connect to the dastabase (getSelected) ${selectedPredictionID}`)
+            alert(`Cannot connect to the dastabase (getSelected) ${id}`)
             console.log("error", result.status)
             var json = await result.json()
             console.log(json)
@@ -102,6 +104,10 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
             // alert("success sellectet")
             var selec = await result.json()
             setSelectedArray(selec)
+            var type = predictionTypes.find((type) => { return type.id === id })?.name
+            if (type) {
+                setPredictionName(type)
+            }
         }
     }
 
@@ -112,10 +118,10 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                     {/* <Image className={styles["hamburger"]} src={hamburger} alt="hamburgermenu" /> */}
                     <LanguageSelect lang={lang} setLang={setLang} />
                 </div>
-                <h1 onClick={() => { setSelectingPrediction(!selectingPrediction) }}
+                <h1 onClick={() => { setSelectingPrediction(!selectingPrediction); setPredictionName("Select GP!") }}
                     className={styles["title"]}>
                     {/* {`F1 - ${predictionTypes.find((val) => { return val.id === selectedPredictionID })?.name}`} */}
-                    {`F1 - ${predictionTypes[selectedPredictionID].name}`}
+                    {`F1 - ${predictionName}`}
                 </h1>
                 <div className={styles["navSideElement"]}>
                     <UserProfile session={session} />
@@ -179,14 +185,14 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                                     </div>
                                 </div>)
                         })}
-                        <Link passHref href={"/f1/createQuestion"}>
+                        {/* <Link passHref href={"/f1/createQuestion"}>
                             <button onClick={() => { }}>Create New Question!</button>
-                        </Link>
+                        </Link> */}
                     </div> :
                     //Selecting
                     <div className={styles["predictionTypeContainer"]}>
                         {predictionTypes.map((predictionType) => {
-                            return (<div key={predictionType.id} onClick={() => {
+                            return (<div key={predictionType.id} className={styles["predictionType"]} onClick={() => {
                                 // alert(`ok click select -${predictionType.id}`)
                                 setSelectedPredictionID(predictionType.id)
                             }}>{predictionType.name}</div>)
