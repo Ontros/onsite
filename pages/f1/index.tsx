@@ -12,6 +12,7 @@ import { Lang, LanguageSelect } from '../../utils/lang'
 import UserProfile from "../../utils/UserProfile"
 import hamburger from "../../public/hamburger_icon.svg"
 import { F1PredictionType } from "@prisma/client"
+import CreateQuestion from "../../utils/createQuestion"
 
 //NOTE: button color based on team color
 export interface Question {
@@ -188,6 +189,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                         {/* <Link passHref href={"/f1/createQuestion"}>
                             <button onClick={() => { }}>Create New Question!</button>
                         </Link> */}
+                        <CreateQuestion langCookie={langCookie} selectedPredictionID={selectedPredictionID} getQuestions={getQuestions} />
                     </div> :
                     //Selecting
                     <div className={styles["predictionTypeContainer"]}>

@@ -3,24 +3,24 @@ import { NextPage } from "next"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useState } from "react"
-import styles from '../../styles/f1.module.css'
+import styles from '../styles/f1.module.css'
 
 interface f1Props {
     langCookie: string
+    selectedPredictionID: number
+    getQuestions: (id: number) => Promise<void>
 }
 
 
-const Index: NextPage<f1Props> = ({ langCookie }) => {
+const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestions }) => {
     const { data: session } = useSession()
     const [question, setQuestion] = useState("")
     const [date, setDate] = useState("")
     const [time, setTime] = useState("")
     console.log(question, date, time)
-    var selectedPredictionID = 2;
     return (
         <div className="flex flex-column flex-center">
             <h1 className={styles["title"]}>Formulky Vytvareni Otazek</h1>
-            {session ? `You are logged in as: ${session?.user?.name}!` : "You are not logged in!"}
             <h3>Otázka:</h3>
             <input value={question} onChange={(event) => { setQuestion(event.target.value) }} type="text" className="text-input" />
             <h3>Konečné datum</h3>
@@ -41,6 +41,7 @@ const Index: NextPage<f1Props> = ({ langCookie }) => {
                     })
 
                     if (result.ok) {
+                        getQuestions(selectedPredictionID)
                         alert("Otazka vytvorena!")
                         setQuestion("")
                     }
