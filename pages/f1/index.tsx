@@ -4,13 +4,10 @@ import { signIn, signOut, useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { useLanguage } from '../../states/useLanguage'
 import styles from '../../styles/f1.module.css'
-import Image from 'next/image'
 import prisma from '../../utils/prisma'
-import Link from "next/link"
 import Countdown from "react-countdown"
 import { Lang, LanguageSelect } from '../../utils/lang'
 import UserProfile from "../../utils/UserProfile"
-import hamburger from "../../public/hamburger_icon.svg"
 import { F1PredictionType } from "@prisma/client"
 import CreateQuestion from "../../utils/createQuestion"
 

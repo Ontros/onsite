@@ -124,6 +124,7 @@ model Transaction {
   authorID String
 }
 
+//100 EUR = 100 cents
 enum Currency {
   EUR
   CZK
