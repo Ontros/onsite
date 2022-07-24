@@ -46,6 +46,8 @@ model User {
   accounts      Account[]
   f1Predictions F1Prediction[]
   sessions      Session[]
+  transactions  Transaction[]
+  balance       Int?
 }
 
 model VerificationToken {
@@ -82,6 +84,8 @@ model F1Question {
   endTime            DateTime
   f1PredictionType   F1PredictionType @relation(fields: [f1PredictionTypeId], references: [id])
   ChoiceTypes        F1ChoiceType[]   @relation("choicetypes")
+  correctChoice      F1ChoiceType? @relation("correctchoicetype", fields: [correctChoiceID], references: [id])
+  correctChoiceID    Int?           @unique
 
   @@index([f1PredictionTypeId], map: "F1Question_f1PredictionTypeId_fkey")
 }
@@ -103,7 +107,25 @@ model F1ChoiceType {
   title      String
   questionID Int
   question   F1Question @relation("choicetypes", fields: [questionID], references: [id])
-  choices    F1Choice[]
+  correctQuestion F1Question? @relation("correctchoicetype")
+  choices    F1Choice[]      
+
 
   @@index([questionID], map: "F1ChoiceType_questionID_fkey")
+}
+
+model Transaction {
+  id  Int @id @default(autoincrement())
+  description String
+  creationTime DateTime @updatedAt
+  amount Int
+  currency Currency @default(CZK)
+  author  User @relation(fields: [authorID], references: [id])
+  authorID String
+}
+
+enum Currency {
+  EUR
+  CZK
+  USD
 }
