@@ -1,29 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider        = "prisma-client-js"
-}
-
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
 model Session {
@@ -32,18 +32,20 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Session_userId_fkey")
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
   f1Points      Int?
   accounts      Account[]
-  sessions      Session[]
   f1Predictions F1Prediction[]
+  sessions      Session[]
 }
 
 model VerificationToken {
@@ -55,46 +57,53 @@ model VerificationToken {
 }
 
 model F1Prediction {
-    id                  String              @id @default(cuid())
-    choices             F1Choice[]
-    user                User                @relation(fields: [userId], references: [id])
-    userId              String
-    f1PredictionType    F1PredictionType    @relation(fields: [f1PredictionTypeId], references: [id])
-    f1PredictionTypeId  Int
+  id                 String           @id @default(cuid())
+  userId             String
+  f1PredictionTypeId Int
+  f1PredictionType   F1PredictionType @relation(fields: [f1PredictionTypeId], references: [id])
+  user               User             @relation(fields: [userId], references: [id])
+  choices            F1Choice[]
+
+  @@index([f1PredictionTypeId], map: "F1Prediction_f1PredictionTypeId_fkey")
+  @@index([userId], map: "F1Prediction_userId_fkey")
 }
 
 model F1PredictionType {
-    id              Int                  @id @default(autoincrement())
-    name            String
-    f1Predicitons   F1Prediction[]
-    questions       F1Question[]
+  id            Int            @id @default(autoincrement())
+  name          String
+  f1Predicitons F1Prediction[]
+  questions     F1Question[]
 }
 
 model F1Question {
-    id                  Int                 @id @default(autoincrement())
-    title               String
-    f1PredictionType    F1PredictionType    @relation(fields: [f1PredictionTypeId],references: [id])
-    f1PredictionTypeId  Int
-    ChoiceTypes         F1ChoiceType[]      @relation("choicetypes")
-    endTime             DateTime
-    correctChoice       F1ChoiceType?       @relation("correctchoicetype", fields: [correctChoiceID], references: [id])
-    correctChoiceID     Int                 @unique
+  id                 Int              @id @default(autoincrement())
+  title              String
+  f1PredictionTypeId Int
+  endTime            DateTime
+  f1PredictionType   F1PredictionType @relation(fields: [f1PredictionTypeId], references: [id])
+  ChoiceTypes        F1ChoiceType[]   @relation("choicetypes")
+
+  @@index([f1PredictionTypeId], map: "F1Question_f1PredictionTypeId_fkey")
 }
 
 model F1Choice {
-    id              Int          @id @default(autoincrement())
-    choiceType      F1ChoiceType    @relation(fields: [choiceTypeId], references: [id])
-    choiceTypeId    Int
-    prediction      F1Prediction    @relation(fields: [predictionID], references: [id])
-    predictionID    String
-    updatedTime     DateTime        @updatedAt
+  id           Int          @id @default(autoincrement())
+  choiceTypeId Int
+  predictionID String
+  updatedTime  DateTime     @updatedAt
+  choiceType   F1ChoiceType @relation(fields: [choiceTypeId], references: [id])
+  prediction   F1Prediction @relation(fields: [predictionID], references: [id])
+
+  @@index([choiceTypeId], map: "F1Choice_choiceTypeId_fkey")
+  @@index([predictionID], map: "F1Choice_predictionID_fkey")
 }
 
 model F1ChoiceType {
-    id          Int          @id @default(autoincrement())
-    title       String
-    question    F1Question      @relation("choicetypes",fields: [questionID], references: [id])
-    questionID  Int
-    correctQuestion F1Question?  @relation("correctchoicetype")
-    choices     F1Choice[]      @relation()
+  id         Int        @id @default(autoincrement())
+  title      String
+  questionID Int
+  question   F1Question @relation("choicetypes", fields: [questionID], references: [id])
+  choices    F1Choice[]
+
+  @@index([questionID], map: "F1ChoiceType_questionID_fkey")
 }
