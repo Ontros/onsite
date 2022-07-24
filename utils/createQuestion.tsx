@@ -32,7 +32,7 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
             <br />
             <button onClick={async () => {
                 try {
-                    const body = { question, selectedPredictionID, endTime: `${date}T${time}:00.000Z` }
+                    const body = { question, selectedPredictionID, endTime: new Date(`${date}T${time}:00.000`).toISOString() }
 
                     const result = await fetch(`/api/f1/createQuestion`, {
                         method: 'POST',
