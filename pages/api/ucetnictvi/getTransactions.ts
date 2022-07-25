@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { Currency } from '@prisma/client'
+import prisma from '../../../utils/prisma'
 
 
 //Creates transaction and returns all transactions by that user
