@@ -21,7 +21,9 @@ const Index: NextPage<ucetnictviProps> = ({ langCookie }) => {
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [exchangeRate, setExchangeRate] = useState(24.56)
     var startingBalanceCZK = 6500;
-    var expensesEUR = transactions.reduce((prev, trans) => { prev.amount += trans.amount; return prev }).amount / 100
+    var expensesEURLocal = 0;
+    transactions.map((val) => { expensesEURLocal += val.amount });
+    var expensesEUR = Math.round(expensesEURLocal) / 100;
 
     useEffect(() => {
         if (!session) {
