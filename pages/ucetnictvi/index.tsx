@@ -20,7 +20,8 @@ const Index: NextPage<ucetnictviProps> = ({ langCookie }) => {
     const [amount, setAmount] = useState(0)
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [exchangeRate, setExchangeRate] = useState(24.56)
-    console.log(transactions)
+    var startingBalanceCZK = 6500;
+    var expensesEUR = transactions.reduce((prev, trans) => { prev.amount += trans.amount; return prev }).amount / 100
 
     useEffect(() => {
         if (!session) {
@@ -94,6 +95,8 @@ const Index: NextPage<ucetnictviProps> = ({ langCookie }) => {
                         {`${id + 1}. ${transaction.description} za ${transaction.amount / 100} EUR neboli ${Math.round((transaction.amount / 100) * exchangeRate)} CZK v čase: ${transaction.creationTime}`}
                     </div>)
                 })}
+                <h2>{`Current balance in CZK is: ${Math.round(startingBalanceCZK - (expensesEUR * exchangeRate))}/${startingBalanceCZK}`}</h2>
+                <h2>{`Current balance in EUR is: ${(Math.round((startingBalanceCZK / exchangeRate) * 100) / 100) - expensesEUR}/${Math.round((startingBalanceCZK / exchangeRate) * 100) / 100}`}</h2>
                 <hr />
                 <h1>Create transaction:</h1>
                 Description
