@@ -28,14 +28,15 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
     var result: F1ChoiceType | null = null
     const choice = await prisma.f1Choice.findFirst({ where: { choiceType: { questionID: question.id }, predictionID: prediction.id } })
-    if (choice) {
+    //if (choice) {
         //update
-        result = await prisma.f1ChoiceType.update({ where: { id: choiceTypeId }, data: { correctQuestion: { connect: { id: question.id } } } })
-    }
-    else {
-        res.status(400).json("no choice")
-        return
-    }
+    result = await prisma.f1ChoiceType.update({ where: { id: choiceTypeId }, data: { correctQuestion: { connect: { id: question.id } } } })
+    //}
+    //else {
+	//console.log(question.id)
+        //res.status(400).json("no choice"+question.id)
+        //return
+    //}
 
 
     res.json(result)
