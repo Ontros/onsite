@@ -8,19 +8,15 @@ import prisma from '../../utils/prisma'
 import Countdown from "react-countdown"
 import { Lang, LanguageSelect } from '../../utils/lang'
 import UserProfile from "../../utils/UserProfile"
-import { F1PredictionType } from "@prisma/client"
+import { F1PredictionType, F1ChoiceType } from "@prisma/client"
 import CreateQuestion from "../../utils/createQuestion"
 
 //NOTE: button color based on team color
 export interface Question {
     question: string,
-    answers: Answer[],
+    choices: { title: string, id: number }[],
     selectedAnswer: number,
-    endTime: string
-}
-
-interface Answer {
-    title: string
+    endTime: string,
     id: number
 }
 
@@ -41,7 +37,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
     const classesF = () => {
         if (!questions) { return [[]] }
         return questions.map((que, indexT) => {
-            return que.answers.map((ans, indexJT) => { return `${styles['radioButton']} radio-button ${selectedArray[indexT] === indexJT ? "radio-button-selected" : ""}` })
+            return que.choices.map((ans, indexJT) => { return `${styles['radioButton']} radio-button ${selectedArray[indexT] === indexJT ? "radio-button-selected" : ""}` })
         })
     }
     const [classes, setClasses] = useState<string[][]>(classesF())
@@ -55,9 +51,12 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
         setRawSelectedPredictionID(id)
         await getQuestions(id)
     }
+    if (session && session.user && session.user.email != "ontro512@gmail.com") {
+        return (<div>Nemas prava plebe</div>)
+    }
 
     const getQuestions = async (id: number) => {
-        const result = await fetch(`/api/f1/getQuestions`, {
+        const result = await fetch(`/api/f1/correct/getQuestions`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ predictionTypeID: id }),
@@ -87,7 +86,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
             // alert(" no quest")
             return
         }
-        const result = await fetch(`/api/f1/getSelected`, {
+        const result = await fetch(`/api/f1/correct/getSelected`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ questions: questionsLocal, predictionTypeID: id, userEmail: session.user.email }),
@@ -128,6 +127,8 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
             <div className="flex flex-column flex-center">
                 {!selectingPrediction ?
                     <div className={styles["questionsContainer"]}>
+                        <h1>YOU ARE NOT GUESSING!!!</h1>
+                        <h1>YOU ARE SUBMITTING CORRECT ONES!!!</h1>
                         <br />
                         {questions?.map((question, index) => {
                             if (!question || !classes) {
@@ -137,7 +138,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                                 <div key={index} className={`${styles["questionContainer"]}`}>
                                     <div className={styles["question"]}>{question.question}<Countdown className={styles["countdown"]} date={new Date(question.endTime)}></Countdown></div>
                                     <div className={styles["questionButtons"]}>
-                                        {question.answers.map((answer, indexJ) => {
+                                        {question.choices.map((answer, indexJ) => {
                                             if (isNaN(indexJ) || !classes[index] || isNaN(index) || !questions) {
                                                 console.log(`missing a${indexJ} b${!classes} c${index}`)
                                                 return <></>
@@ -155,7 +156,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                                                         var selectedArrayTemp = selectedArray
                                                         selectedArrayTemp[index] = indexJ
                                                         setSelectedArray(selectedArrayTemp)
-                                                        const result = await fetch(`/api/f1/setChoice`, {
+                                                        const result = await fetch(`/api/f1/correct/setChoice`, {
                                                             method: 'POST',
                                                             headers: { 'Content-Type': 'application/json' },
                                                             body: JSON.stringify({ choiceTypeId: answer.id, predictionTypeID: selectedPredictionID, userEmail: session.user.email }),
@@ -186,7 +187,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                         {/* <Link passHref href={"/f1/createQuestion"}>
                             <button onClick={() => { }}>Create New Question!</button>
                         </Link> */}
-                        <CreateQuestion langCookie={langCookie} selectedPredictionID={selectedPredictionID} getQuestions={getQuestions} />
+                        {/* <CreateQuestion langCookie={langCookie} selectedPredictionID={selectedPredictionID} getQuestions={getQuestions} /> */}
                     </div> :
                     //Selecting
                     <div className={styles["predictionTypeContainer"]}>
