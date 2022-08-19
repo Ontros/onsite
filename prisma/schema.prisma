@@ -48,6 +48,10 @@ model User {
   sessions      Session[]
   transactions  Transaction[]
   balance       Int?
+  f1Questions   F1Question[]
+  receivedTransactions  cointransaction[] @relation("from")
+  sentTransactions      cointransaction[] @relation("to")
+  onCoinAmount  Int?
 }
 
 model VerificationToken {
@@ -71,21 +75,25 @@ model F1Prediction {
 }
 
 model F1PredictionType {
-  id            Int            @id @default(autoincrement())
-  name          String
-  f1Predicitons F1Prediction[]
-  questions     F1Question[]
+  id              Int            @id @default(autoincrement())
+  name            String
+  f1Predicitons   F1Prediction[]
+  questions       F1Question[]
+  f1WeekendParts   f1weekendpart[]
 }
 
 model F1Question {
-  id                 Int              @id @default(autoincrement())
-  title              String
-  f1PredictionTypeId Int
-  endTime            DateTime
-  f1PredictionType   F1PredictionType @relation(fields: [f1PredictionTypeId], references: [id])
-  ChoiceTypes        F1ChoiceType[]   @relation("choicetypes")
-  correctChoice      F1ChoiceType? @relation("correctchoicetype", fields: [correctChoiceID], references: [id])
-  correctChoiceID    Int?           @unique
+  id                  Int              @id @default(autoincrement())
+  title               String
+  f1PredictionTypeId  Int
+  endTime             DateTime
+  f1PredictionType    F1PredictionType @relation(fields: [f1PredictionTypeId], references: [id])
+  ChoiceTypes         F1ChoiceType[]   @relation("choicetypes")
+  correctChoice       F1ChoiceType? @relation("correctchoicetype", fields: [correctChoiceID], references: [id])
+  correctChoiceID     Int?           @unique
+  author              User?           @relation(fields: [authorID], references: [id])
+  authorID            String
+  f1weekendparts      f1weekendpart[]
 
   @@index([f1PredictionTypeId], map: "F1Question_f1PredictionTypeId_fkey")
 }
@@ -129,4 +137,29 @@ enum Currency {
   EUR
   CZK
   USD
+}
+
+enum Coins {
+  OnCoin
+}
+
+model f1weekendpart {
+  id    Int @id @default(autoincrement())
+  name  String
+  predictionType    F1PredictionType @relation(fields: [predictionTypeId], references: [id])
+  predictionTypeId  Int
+  endTime           DateTime
+  f1Questions       F1Question[]
+}
+
+model cointransaction {
+  id          Int @id @default(autoincrement())
+  from        User @relation("from", fields: [fromUserId], references: [id])
+  fromUserId  String
+  to          User @relation("to", fields: [toUserId], references: [id])
+  toUserId    String
+  amount      Int
+  currency    Coins
+  valid       Boolean @default(false)
+  time        DateTime @default(now())
 }
