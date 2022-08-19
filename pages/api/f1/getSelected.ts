@@ -6,7 +6,6 @@ import { Question } from '../../f1'
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
     // await prisma.f1Question.deleteMany({ where: { f1PredictionTypeId: 1 } })
-    //TODO security lmao
     const { predictionTypeID, questions, userEmail }: { choiceTypeId: number, questions: Question[], predictionTypeID: number, userEmail: string } = req.body
     var prediction = await prisma.f1Prediction.findFirst({ where: { user: { email: userEmail } } })
     if (!prediction) {

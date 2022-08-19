@@ -12,9 +12,7 @@ interface Question {
 }
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    //TODO security lmao
     const { predictionTypeID }: { predictionTypeID: number } = req.body
-
 
     const Questions = await prisma.f1Question.findMany({
         where: { f1PredictionTypeId: predictionTypeID },

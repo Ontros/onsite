@@ -5,7 +5,6 @@ import prisma from '../../../utils/prisma'
 
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    //TODO security lmao
     const { questionID, password }: { password: string, questionID: number } = req.body
 
     if (process.env.PASSWORD != password) {

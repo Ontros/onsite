@@ -12,7 +12,6 @@ export function useLanguage(cookieLanguage: string) {
     }
     return { lang, setLang }
 }
-//TODO:
 export function getCookieProp({ req }: NextPageContext) {
     const cookies = cookie.parse(req ? req.headers.cookie || "" : document.cookie);
     console.log("cookies", cookies, cookies.language)

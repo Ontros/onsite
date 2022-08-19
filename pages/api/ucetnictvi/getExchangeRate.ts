@@ -4,7 +4,6 @@ import { Currency } from '@prisma/client'
 
 //Creates transaction and returns all transactions by that user
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    //TODO security lmao, currency
 
     var headers = new Headers()
     if (!process.env.EXCHANGE_API) {

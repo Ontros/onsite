@@ -6,6 +6,7 @@ import prisma from '../../../utils/prisma'
 // Required fields in body: title, authorEmail
 // Optional fields in body: content
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+    //TODO: author
     const { question, selectedPredictionID, endTime } = req.body
     const result = await prisma.f1Question.create({
         data: {

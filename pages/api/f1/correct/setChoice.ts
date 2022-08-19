@@ -1,22 +1,22 @@
 import { F1Choice, F1ChoiceType } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '../../../../utils/prisma'
+import { unstable_getServerSession } from 'next-auth'
+import { authOptions } from '../../auth/[...nextauth]'
 
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    //TODO security lmao
+    const { choiceTypeId, predictionTypeID }: { choiceTypeId: number, predictionTypeID: number } = req.body
 
-
-    const { choiceTypeId, predictionTypeID, userEmail }: { choiceTypeId: number, predictionTypeID: number, userEmail: string } = req.body
-    if (userEmail != "ontro512@gmail.com") {
-        console.log("Insufficient permission (correct/getSelected)")
+    const session = await unstable_getServerSession(req, res, authOptions)
+    if (session?.user?.email != "ontro512@gmail.com") {
         res.status(400).json("insuffiecient permission")
         return
     }
 
-    var prediction = await prisma.f1Prediction.findFirst({ where: { user: { email: userEmail } } })
+    var prediction = await prisma.f1Prediction.findFirst({ where: { user: { email: session.user.email } } })
     if (!prediction) {
-        prediction = await prisma.f1Prediction.create({ data: { user: { connect: { email: userEmail } }, f1PredictionType: { connect: { id: predictionTypeID } } } })
+        prediction = await prisma.f1Prediction.create({ data: { user: { connect: { email: session.user.email } }, f1PredictionType: { connect: { id: predictionTypeID } } } })
     }
 
     var question = (await prisma.f1ChoiceType.findUnique({ where: { id: choiceTypeId }, select: { question: true } }))?.question
@@ -27,17 +27,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     }
 
     var result: F1ChoiceType | null = null
-    const choice = await prisma.f1Choice.findFirst({ where: { choiceType: { questionID: question.id }, predictionID: prediction.id } })
-    //if (choice) {
-        //update
     result = await prisma.f1ChoiceType.update({ where: { id: choiceTypeId }, data: { correctQuestion: { connect: { id: question.id } } } })
-    //}
-    //else {
-	//console.log(question.id)
-        //res.status(400).json("no choice"+question.id)
-        //return
-    //}
-
 
     res.json(result)
 }

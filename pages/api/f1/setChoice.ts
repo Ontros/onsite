@@ -1,18 +1,24 @@
 import { F1Choice } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '../../../utils/prisma'
+import { unstable_getServerSession } from 'next-auth'
+import { authOptions } from '../auth/[...nextauth]'
 
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    //TODO security lmao
     var startTime = performance.now()
 
+    const session = await unstable_getServerSession(req, res, authOptions)
+    if (!session?.user?.email) {
+        res.status(400).json("You are not logged in!")
+        return
+    }
 
-    const { choiceTypeId, predictionTypeID, userEmail }: { choiceTypeId: number, predictionTypeID: number, userEmail: string } = req.body
+    const { choiceTypeId, predictionTypeID }: { choiceTypeId: number, predictionTypeID: number } = req.body
 
-    var prediction = await prisma.f1Prediction.findFirst({ where: { user: { email: userEmail } } })
+    var prediction = await prisma.f1Prediction.findFirst({ where: { user: { email: session.user.email } } })
     if (!prediction) {
-        prediction = await prisma.f1Prediction.create({ data: { user: { connect: { email: userEmail } }, f1PredictionType: { connect: { id: predictionTypeID } } } })
+        prediction = await prisma.f1Prediction.create({ data: { user: { connect: { email: session.user.email } }, f1PredictionType: { connect: { id: predictionTypeID } } } })
     }
 
     var question = (await prisma.f1ChoiceType.findUnique({ where: { id: choiceTypeId }, select: { question: true } }))?.question

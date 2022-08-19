@@ -5,7 +5,6 @@ import { Question } from '../../f1'
 
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    //TODO security lmao
     const { predictionTypeID }: { predictionTypeID: number } = req.body
 
 

@@ -6,7 +6,6 @@ import { Question } from '../../../f1/selectCorrect'
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
     // await prisma.f1Question.deleteMany({ where: { f1PredictionTypeId: 1 } })
-    //TODO security lmao
     const { predictionTypeID, questions, userEmail }: { choiceTypeId: number, questions: Question[], predictionTypeID: number, userEmail: string } = req.body
     if (userEmail != "ontro512@gmail.com") {
         console.log("Insufficient permission (correct/getSelected)")
