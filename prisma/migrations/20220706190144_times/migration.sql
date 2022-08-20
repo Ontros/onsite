@@ -7,10 +7,10 @@
 
 */
 -- AlterTable
-ALTER TABLE `F1Choice` ADD COLUMN `updatedTime` DATETIME(3) NOT NULL;
+ALTER TABLE `f1choice` ADD COLUMN `updatedTime` DATETIME(3) NOT NULL;
 
 -- AlterTable
-ALTER TABLE `F1PredictionType` DROP COLUMN `endTime`;
+ALTER TABLE `f1predictiontype` DROP COLUMN `endTime`;
 
 -- AlterTable
-ALTER TABLE `F1Question` ADD COLUMN `endTime` DATETIME(3) NOT NULL;
+ALTER TABLE `f1question` ADD COLUMN `endTime` DATETIME(3) NOT NULL;

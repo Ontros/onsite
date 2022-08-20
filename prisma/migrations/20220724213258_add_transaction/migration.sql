@@ -5,10 +5,10 @@
 
 */
 -- AlterTable
-ALTER TABLE `F1Question` ADD COLUMN `correctChoiceID` INTEGER NULL;
+ALTER TABLE `f1question` ADD COLUMN `correctChoiceID` INTEGER NULL;
 
 -- AlterTable
-ALTER TABLE `User` ADD COLUMN `balance` INTEGER NULL;
+ALTER TABLE `user` ADD COLUMN `balance` INTEGER NULL;
 
 -- CreateTable
 CREATE TABLE `Transaction` (
