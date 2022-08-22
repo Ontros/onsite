@@ -92,7 +92,7 @@ model F1Question {
   correctChoice       F1ChoiceType? @relation("correctchoicetype", fields: [correctChoiceID], references: [id])
   correctChoiceID     Int?           @unique
   author              User?           @relation(fields: [authorID], references: [id])
-  authorID            String
+  authorID            String?
   f1weekendparts      f1weekendpart[]
 
   @@index([f1PredictionTypeId], map: "F1Question_f1PredictionTypeId_fkey")
