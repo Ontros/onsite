@@ -7,7 +7,13 @@ import { Question } from '../../f1'
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
     const { predictionTypeID }: { predictionTypeID: number } = req.body
 
-
+    const allWeekendParts = await prisma.f1weekendpart.findMany({
+        where: { predictionTypeId: predictionTypeID }, select: {
+            name: true,
+            id: true,
+            endTime: true
+        }
+    })
     const Questions = await prisma.f1Question.findMany({
         where: { f1PredictionTypeId: predictionTypeID },
         select: {
@@ -17,6 +23,13 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
                 select: {
                     title: true,
                     id: true
+                }
+            },
+            f1weekendparts: {
+                select: {
+                    name: true,
+                    id: true,
+                    endTime: true
                 }
             }
         }
@@ -28,9 +41,18 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
                 return { title: value.title, id: value.id }
             }),
             selectedAnswer: 0,
-            endTime: val.endTime.toISOString()
+            endTime: val.endTime.toISOString(),
+            f1WeekendParts: val.f1weekendparts
         }
     })
 
-    res.json(result)
+    res.json({ questions: result, allWeekendParts })
 }
+
+interface weekendPart {
+    name: string;
+    id: number;
+    endTime: Date;
+}
+
+export type { weekendPart }

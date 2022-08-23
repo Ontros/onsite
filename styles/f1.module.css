@@ -84,3 +84,17 @@
     filter: invert(100%);
     margin-left: 10em;
 }
+
+.leedingText {
+    color: var(--dark6);
+    align-self: flex-start;
+    font-size: 15px;
+}
+
+.timeLabel {
+    margin-block-end: 0;
+}
+
+.timeData{
+    font-size: .85em;
+}

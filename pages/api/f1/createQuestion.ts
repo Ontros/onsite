@@ -7,13 +7,14 @@ import prisma from '../../../utils/prisma'
 // Optional fields in body: content
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
     //TODO: author
-    const { question, selectedPredictionID, endTime } = req.body
+    const { question, selectedPredictionID, endTime, selectedWeekendParts } = req.body
     const result = await prisma.f1Question.create({
         data: {
             title: question,
             ChoiceTypes: { createMany: { data: [{ title: "Ano" }, { title: "Ne" }] } },
             f1PredictionType: { connect: { id: selectedPredictionID } },
-            endTime: endTime
+            endTime: endTime,
+            f1weekendparts: { connect: selectedWeekendParts }
         }
     })
     res.json(result)

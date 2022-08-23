@@ -14,6 +14,7 @@ body {
   --dark3: #35373a;
   --dark4: #515358;
   --dark5: #6e7074;
+  --dark6: #8a8484;
   --popup-bezier: cubic-bezier(.42,.12,.38,1.37);
 }
 .radio-container {

@@ -10,13 +10,15 @@ import { Lang, LanguageSelect } from '../../utils/lang'
 import UserProfile from "../../utils/UserProfile"
 import { F1PredictionType } from "@prisma/client"
 import CreateQuestion from "../../utils/createQuestion"
+import { weekendPart } from "../api/f1/getQuestions"
 
 //NOTE: button color based on team color
 export interface Question {
     question: string,
     answers: Answer[],
     selectedAnswer: number,
-    endTime: string
+    endTime: string,
+    f1WeekendParts: weekendPart[]
 }
 
 interface Answer {
@@ -37,6 +39,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
     const [questions, setQuestions] = useState<Question[] | null>(dbQuestions)
     const [selectingPrediction, setSelectingPrediction] = useState(true)
     const [predictionName, setPredictionName] = useState("Select GP!");
+    const [allWeekendParts, setAllWeekendParts] = useState<weekendPart[]>([])
     //beacause react doesnt update button classes without running this function :)
     const classesF = () => {
         if (!questions) { return [[]] }
@@ -71,10 +74,11 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
         else {
             // alert("success questions")
             var selec = await result.json()
-            console.log(74, selec)
-            setQuestions(selec)
-            await getSelected(id, selec)
+            console.log(74, selec.questions)
+            setQuestions(selec.questions)
+            await getSelected(id, selec.questions)
             setSelectingPrediction(false)
+            setAllWeekendParts(selec.allWeekendParts)
         }
     }
 
@@ -133,8 +137,13 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                             if (!question || !classes) {
                                 return <></>
                             }
+                            var leedingText = question.f1WeekendParts.map(val => { return val.name }).join(" + ")
+                            if (leedingText) {
+                                leedingText += ":"
+                            }
                             return (
                                 <div key={index} className={`${styles["questionContainer"]}`}>
+                                    <div className={styles["leedingText"]}>{leedingText}</div>
                                     <div className={styles["question"]}>{question.question}<Countdown className={styles["countdown"]} date={new Date(question.endTime)}></Countdown></div>
                                     <div className={styles["questionButtons"]}>
                                         {question.answers.map((answer, indexJ) => {
@@ -186,7 +195,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                         {/* <Link passHref href={"/f1/createQuestion"}>
                             <button onClick={() => { }}>Create New Question!</button>
                         </Link> */}
-                        <CreateQuestion langCookie={langCookie} selectedPredictionID={selectedPredictionID} getQuestions={getQuestions} />
+                        <CreateQuestion allWeekendParts={allWeekendParts} langCookie={langCookie} selectedPredictionID={selectedPredictionID} getQuestions={getQuestions} />
                     </div> :
                     //Selecting
                     <div className={styles["predictionTypeContainer"]}>
