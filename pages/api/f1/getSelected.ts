@@ -14,11 +14,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
     var result: number[] = []
     var index = 0
-    console.log(predictionTypeID, questions)
+    // console.log(predictionTypeID, questions)
     for (var question of questions) {
         // var fds = await questions.forEach(async (question, index) => {
-        //NOTE: question neni unique, posilat do clienta id a delat to podle id
-        var choice = await prisma.f1Choice.findFirst({ where: { choiceType: { question: { title: question.question } }, prediction: { userId: prediction.userId } }, include: { choiceType: true } })
+        var choice = await prisma.f1Choice.findFirst({ where: { choiceType: { question: { id: question.id } }, prediction: { userId: prediction.userId } }, include: { choiceType: true } })
         if (choice) {
             result[index] = question.answers.findIndex((ans) => { return ans.title === choice?.choiceType.title })
         }

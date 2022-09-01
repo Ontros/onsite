@@ -18,6 +18,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         where: { f1PredictionTypeId: predictionTypeID },
         select: {
             title: true,
+            id: true,
             endTime: true,
             ChoiceTypes: {
                 select: {
@@ -42,7 +43,8 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             }),
             selectedAnswer: 0,
             endTime: val.endTime.toISOString(),
-            f1WeekendParts: val.f1weekendparts
+            f1WeekendParts: val.f1weekendparts,
+            id: val.id
         }
     })
 

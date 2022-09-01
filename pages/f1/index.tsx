@@ -19,6 +19,7 @@ export interface Question {
     selectedAnswer: number,
     endTime: string,
     f1WeekendParts: weekendPart[]
+    id: number
 }
 
 interface Answer {
@@ -44,7 +45,9 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
     const classesF = () => {
         if (!questions) { return [[]] }
         return questions.map((que, indexT) => {
-            return que.answers.map((ans, indexJT) => { return `${styles['radioButton']} radio-button ${selectedArray[indexT] === indexJT ? "radio-button-selected" : ""}` })
+            return que.answers.map((ans, indexJT) => {
+                return `${styles['radioButton']} radio-button ${selectedArray[indexT] === indexJT ? "radio-button-selected" : ""}`
+            })
         })
     }
     const [classes, setClasses] = useState<string[][]>(classesF())

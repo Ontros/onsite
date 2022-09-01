@@ -6,8 +6,6 @@ import { authOptions } from '../auth/[...nextauth]'
 
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    var startTime = performance.now()
-
     const session = await unstable_getServerSession(req, res, authOptions)
     if (!session?.user?.email) {
         res.status(400).json("You are not logged in!")
@@ -45,8 +43,5 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         result = await prisma.f1Choice.create({ data: { choiceTypeId: choiceTypeId, predictionID: prediction.id } })
     }
 
-    var endTime = performance.now()
-
-    console.log(`Call to doSomething took ${endTime - startTime} milliseconds`)
     res.json(result)
 }
