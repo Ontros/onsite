@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import Discord, { IntentsBitField } from 'discord.js'
 import prisma from '../../../utils/prisma'
 
 interface IDictionary {
