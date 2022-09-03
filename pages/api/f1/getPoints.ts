@@ -21,7 +21,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     for (var user of users) {
         const questions = await prisma.f1Question.findMany({
             select: {
-                author: { select: { name: true } },
                 ChoiceTypes: {
                     select: {
                         choices: {
@@ -45,25 +44,34 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         var wrongAnswers = 0
         var maxPoints = 0
         var unansweredQuesionCount = 0
+        var errorQuesions = 0
         for (var question of questions) {
             if (question.correctChoiceID) {
                 maxPoints++
-                if (question.ChoiceTypes && question.ChoiceTypes[0] && question.ChoiceTypes[0].choices && question.ChoiceTypes[0].choices[0] && question.ChoiceTypes[0].choices[0].choiceTypeId) {
-                    if (question.correctChoiceID === question.ChoiceTypes[0].choices[0].choiceTypeId) {
-                        points++
+                if (question.ChoiceTypes) {
+                    //Find answer
+                    const anses = question.ChoiceTypes.filter((val) => { return !!val.choices[0] })
+                    if (anses.length === 1) {
+                        if (question.correctChoiceID === anses[0].choices[0].choiceTypeId) {
+                            points++
+                        }
+                        else {
+                            wrongAnswers++
+                        }
+                    }
+                    else if (anses.length === 0) {
+                        unansweredQuesionCount++
                     }
                     else {
-                        wrongAnswers++
+                        console.log(`Weird amount of anses (${anses.length})`)
+                        errorQuesions++
                     }
-                }
-                else {
-                    unansweredQuesionCount++
                 }
             }
         }
         result[user.name ? user.name : "missing name"] = {
-            points, maxPoints, unansweredQuesionCount, wrongAnswers
+            points, maxPoints, unansweredQuesionCount, wrongAnswers, errorQuesions
         }
     }
-    res.json(result)
+    res.json(JSON.stringify(result, null, " "))
 }

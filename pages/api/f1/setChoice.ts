@@ -28,7 +28,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
     if (question?.endTime < new Date()) {
         res.status(400).json({ message: "Too late" })
-        // return
+        return
     }
 
     var result: F1Choice | null = null
