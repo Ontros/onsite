@@ -19,7 +19,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     })
     const result: IDictionary = {}
     for (var user of users) {
-        const questionsUserLoop = await prisma.f1Question.findMany({
+        const questions = await prisma.f1Question.findMany({
             select: {
                 author: { select: { name: true } },
                 ChoiceTypes: {
@@ -42,14 +42,18 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             }
         })
         var points = 0
+        var wrongAnswers = 0
         var maxPoints = 0
         var unansweredQuesionCount = 0
-        for (var question of questionsUserLoop) {
+        for (var question of questions) {
             if (question.correctChoiceID) {
                 maxPoints++
                 if (question.ChoiceTypes && question.ChoiceTypes[0] && question.ChoiceTypes[0].choices && question.ChoiceTypes[0].choices[0] && question.ChoiceTypes[0].choices[0].choiceTypeId) {
                     if (question.correctChoiceID === question.ChoiceTypes[0].choices[0].choiceTypeId) {
                         points++
+                    }
+                    else {
+                        wrongAnswers++
                     }
                 }
                 else {
@@ -58,7 +62,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             }
         }
         result[user.name ? user.name : "missing name"] = {
-            points, totalPoints: maxPoints, unansweredQuesionCount
+            points, maxPoints, unansweredQuesionCount, wrongAnswers
         }
     }
     res.json(result)
