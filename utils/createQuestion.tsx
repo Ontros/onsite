@@ -95,8 +95,14 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
                         setQuestion("")
                     }
                     else {
-                        alert("error")
-                        console.log("error", result.status)
+                        try {
+                            var json = await result.json()
+                            alert(json.message)
+                        }
+                        catch {
+                            alert("error")
+                            console.log("error", result.status)
+                        }
                     }
                 } catch (error) {
                     alert("Some data is missing!")
