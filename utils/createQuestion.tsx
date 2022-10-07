@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { weekendPart } from "../pages/api/f1/getQuestions"
 import styles from '../styles/f1.module.css'
+import Settings from "./Settings"
 
 interface f1Props {
     langCookie: string
@@ -80,8 +81,14 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
                         alert("Nezadal si část víkendu!")
                         return
                     }
+                    var localTime = time
 
-                    const body = { question, selectedPredictionID, endTime: new Date(`${date}T${time}:00.000`).toISOString(), selectedWeekendParts: allWeekendParts.map((val) => { return { id: val.id } }).filter((val, id) => { return selectedWeekendParts[id] }) }
+                    if (time.split(":").length === 1) {
+                        localTime = "0" + time
+                        // setTime(localTime)
+                    }
+
+                    const body = { question, selectedPredictionID, endTime: new Date(`${date}T${localTime}:00.000`).toISOString(), selectedWeekendParts: allWeekendParts.map((val) => { return { id: val.id } }).filter((val, id) => { return selectedWeekendParts[id] }) }
 
                     const result = await fetch(`/api/f1/createQuestion`, {
                         method: 'POST',
