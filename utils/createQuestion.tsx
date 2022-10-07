@@ -83,7 +83,7 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
                     }
                     var localTime = time
 
-                    if (time.split(":").length === 1) {
+                    if (time.split(":")[0].length === 1) {
                         localTime = "0" + time
                         // setTime(localTime)
                     }
