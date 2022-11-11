@@ -41,7 +41,8 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
         var minEndTimeString: string = minEndTime
 
         setDate(minEndTimeString.split("T")[0])
-        setTime((parseInt(minEndTimeString.split("T")[1].split(":")[0]) + 2) + ":" + minEndTimeString.split("T")[1].split(":")[1])
+        //NOTE: Time zone
+        setTime((parseInt(minEndTimeString.split("T")[1].split(":")[0]) + 1) + ":" + minEndTimeString.split("T")[1].split(":")[1])
 
         console.log(minEndTime)
     }

@@ -8,6 +8,7 @@ import { authOptions } from '../auth/[...nextauth]'
 // Required fields in body: title, authorEmail
 // Optional fields in body: content
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+    //TODO: verify endTime
     const { question, selectedPredictionID, endTime, selectedWeekendParts } = req.body
     const session = await unstable_getServerSession(req, res, authOptions)
     if (!session?.user?.email) {
