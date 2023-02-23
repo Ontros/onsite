@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { NextPage } from "next"
 import { signIn, signOut, useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { useLanguage } from '../../states/useLanguage'
 import styles from '../../styles/f1.module.css'
 import prisma from '../../utils/prisma'
 import Countdown from "react-countdown"
 import { Lang, LanguageSelect } from '../../utils/lang'
 import UserProfile from "../../utils/UserProfile"
-import { F1PredictionType } from "@prisma/client"
+import { F1PredictionType, f1weekendpart } from "@prisma/client"
 import CreateQuestion from "../../utils/createQuestion"
 import { weekendPart } from "../api/f1/getQuestions"
 
@@ -30,7 +30,9 @@ interface Answer {
 interface f1Props {
     langCookie: string
     dbQuestions: Question[]
-    predictionTypes: F1PredictionType[]
+    predictionTypes: (F1PredictionType & {
+        f1WeekendParts: { endTime: string }[];
+    })[]
 }
 const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) => {
     const { lang, setLang } = useLanguage(langCookie)
@@ -202,12 +204,29 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                     </div> :
                     //Selecting
                     <div className={styles["predictionTypeContainer"]}>
-                        {predictionTypes.map((predictionType) => {
-                            return (<div key={predictionType.id} className={styles["predictionType"]} onClick={() => {
-                                // alert(`ok click select -${predictionType.id}`)
-                                setSelectedPredictionID(predictionType.id)
-                            }}>{predictionType.name}</div>)
-                        })}
+                        {
+                            predictionTypes.map((predictionType, index, predictionTypesLocal) => {
+                                let dateStringThis = predictionType.f1WeekendParts.find(() => { return true })?.endTime
+                                if (!dateStringThis) {
+                                    dateStringThis = "2022"
+                                }
+                                let dateThis: Date = new Date(dateStringThis)
+                                let dateStringBefore = predictionTypesLocal[index - 1]?.f1WeekendParts.find(() => { return true })?.endTime
+                                if (!dateStringBefore) {
+                                    dateStringBefore = index === 0 ? "2000" : "2022"
+                                }
+                                let dateBefore = new Date(dateStringBefore)
+                                return (<Fragment key={index}>
+                                    {/* {"" + (dateThis.getFullYear() !== dateBefore.getFullYear()) + dateBefore.getFullYear() + dateThis.getFullYear() + " fadsfdas "} */}
+                                    {(dateThis.getFullYear() !== dateBefore.getFullYear()) &&
+                                        <div style={{ fontSize: 50, marginTop: 20, color: 'gray', marginBottom: 0 }}>
+                                            {dateThis.getFullYear() + ":"}
+                                        </div>}
+                                    <div key={predictionType.id} className={styles["predictionType"]} onClick={() => {
+                                        setSelectedPredictionID(predictionType.id)
+                                    }}>{`${predictionType.name}`}</div>
+                                </Fragment>)
+                            })}
                     </div>
                 }
             </div>
@@ -218,11 +237,32 @@ export default Index
 
 export async function getServerSideProps() {
     //NOTE: change prediction type ID, make it dynamic and stuff, great comment, thanks mate
-    const predictionTypes = await prisma.f1PredictionType.findMany()
+    const predictionTypes = await prisma.f1PredictionType.findMany({ select: { name: true, id: true, f1WeekendParts: { take: 1, select: { endTime: true } } } })
+    for (let type of predictionTypes) {
+        for (let weekendPart of type.f1WeekendParts) {
+            //@ts-expect-error
+            weekendPart.endTime = weekendPart.endTime.toDateString()
+        }
+    }
+
     return {
         props: {
             // dbQuestions,
-            predictionTypes
+            predictionTypes: predictionTypes.sort((a, b) => {
+                let aTimeString = a.f1WeekendParts.find(() => { return true })?.endTime
+                let bTimeString = b.f1WeekendParts.find(() => { return true })?.endTime
+                if (!aTimeString || !bTimeString) {
+                    return 1
+                }
+                else if (new Date(aTimeString) > new Date(bTimeString)) {
+                    return 1
+                }
+                else if (new Date(aTimeString) < new Date(bTimeString)) {
+                    return -1
+                }
+                return 0
+
+            })
         }
     }
 }

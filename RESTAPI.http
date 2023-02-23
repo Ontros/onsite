@@ -2,13 +2,13 @@ GET http://localhost:3000/api/f1/createPredictionType HTTP/1.1
 content-type: application/json
 
 {
-    "name": "Zandvoort",
+    "name": "2023 Season",
     "password": "devPassword",
     "weekendParts":[
-        {"name":"FP1", "endTime":"2022-09-02T10:30:00.000Z"},
-        {"name":"FP2", "endTime":"2022-09-02T14:00:00.000Z"},
-        {"name":"FP3", "endTime":"2022-09-03T10:00:00.000Z"},
-        {"name":"Qualifying", "endTime":"2022-09-03T13:00:00.000Z"},
-        {"name":"Race", "endTime":"2022-09-04T13:00:00.000Z"}
+        {"name":"FP1", "endTime":"2023-09-02T10:30:00.000Z"},
+        {"name":"FP2", "endTime":"2023-09-02T14:00:00.000Z"},
+        {"name":"FP3", "endTime":"2023-09-03T10:00:00.000Z"},
+        {"name":"Qualifying", "endTime":"2023-09-03T13:00:00.000Z"},
+        {"name":"Race", "endTime":"2023-09-04T13:00:00.000Z"}
     ]
 }
