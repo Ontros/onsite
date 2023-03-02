@@ -107,7 +107,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             // console.log({ unansweredQuesionCount, lateAnses, errorQuesions, maxPoints })
             try {
                 if (unansweredQuesionCount > 0) {
-                    (await bot.users.fetch(user.accounts[0].providerAccountId)).send(`Čus, sorry že ruším, ale stále ti chybí zodpovědět na ${unansweredQuesionCount} otázek, tak šupito presto na to odpověz, byla by přece škoda, kdyby si ztratil bodíky a když už tam budeš můžeš vytvořit nové ;) (Pokud najdeš nějaký problém, stačí kontaktovat Ontro#6947)`)
+                    (await bot.users.fetch(user.accounts[0].providerAccountId)).send(`Čus, sorry že ruším, ale stále ti chybí zodpovědět na ${unansweredQuesionCount} otázek, tak šupito presto na to odpověz, byla by přece škoda, kdyby si ztratil bodíky a když už tam budeš můžeš vytvořit nové ;) (Pokud najdeš nějaký problém, stačí kontaktovat Ontro#6947) https://www.ontro.cz/f1`)
                     console.log(`Message sent to ${user.name} at ${new Date().toISOString()}`);
                 }
             }
