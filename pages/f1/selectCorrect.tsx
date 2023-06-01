@@ -10,6 +10,7 @@ import { Lang, LanguageSelect } from '../../utils/lang'
 import UserProfile from "../../utils/UserProfile"
 import { F1PredictionType, F1ChoiceType } from "@prisma/client"
 import CreateQuestion from "../../utils/createQuestion"
+import { weekendPart } from "../api/f1/getQuestions"
 
 //NOTE: button color based on team color
 export interface Question {
@@ -17,6 +18,7 @@ export interface Question {
     choices: { title: string, id: number }[],
     selectedAnswer: number,
     endTime: string,
+    f1WeekendParts: weekendPart[],
     id: number
 }
 
@@ -134,8 +136,16 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                             if (!question || !classes) {
                                 return <></>
                             }
+                            var leedingText = question.f1WeekendParts.map(val => { return val.name }).join(" + ")
+                            if (leedingText) {
+                                leedingText += ":"
+                            }
+                            else {
+                                leedingText = ""
+                            }
                             return (
                                 <div key={index} className={`${styles["questionContainer"]}`}>
+                                    <div className={styles["leedingText"]}>{leedingText}</div>
                                     <div className={styles["question"]}>{question.question}<Countdown className={styles["countdown"]} date={new Date(question.endTime)}></Countdown></div>
                                     <div className={styles["questionButtons"]}>
                                         {question.choices.map((answer, indexJ) => {

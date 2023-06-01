@@ -25,7 +25,14 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
                     id: true
                 }
             },
-            id: true
+            id: true,
+            f1weekendparts: {
+                select: {
+                    name: true,
+                    id: true,
+                    endTime: true
+                }
+            }
         }
     })
     const result: Question[] = Questions.map((val) => {
@@ -37,6 +44,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             // choices: val.ChoiceTypes,
             selectedAnswer: 0,
             endTime: val.endTime.toISOString(),
+            f1WeekendParts: val.f1weekendparts,
             id: val.id
         }
     })
