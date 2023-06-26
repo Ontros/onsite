@@ -149,7 +149,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                             return (
                                 <div key={index} className={`${styles["questionContainer"]}`}>
                                     <div className={styles["leedingText"]}>{leedingText}</div>
-                                    <div className={styles["question"]}>{question.question}<Countdown className={styles["countdown"]} date={new Date(question.endTime)}></Countdown></div>
+                                    <div className={styles["question"]}>{question.question}<Countdown now={() => { return Date.now().valueOf() }} className={styles["countdown"]} date={new Date(question.endTime)}></Countdown></div>
                                     <div className={styles["questionButtons"]}>
                                         {question.answers.map((answer, indexJ) => {
                                             if (isNaN(indexJ) || !classes[index] || isNaN(index) || !questions) {

@@ -16,11 +16,9 @@ interface f1Props {
 
 
 const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestions, allWeekendParts }) => {
-    const { data: session } = useSession()
     const [question, setQuestion] = useState("")
-    const [date, setDate] = useState("")
-    const [time, setTime] = useState("")
     const [selectedWeekendParts, setSelectedWeekendParts] = useState<boolean[]>(allWeekendParts.map(() => { return false }))
+    const [endDate, setEndDate] = useState<null | string>(null)
 
     const updateEndTime = async (localSelected: boolean[]) => {
         var validWeekendParts = allWeekendParts.filter((val, id) => { return localSelected[id] })
@@ -32,19 +30,11 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
         })
 
         if (!minEndTime) {
-            setDate("")
-            setTime("")
+            setEndDate(null)
             return
         }
-        //Typescript doesnt know that it will always be valid
-        //@ts-ignore
-        var minEndTimeString: string = minEndTime
 
-        setDate(minEndTimeString.split("T")[0])
-        //NOTE: Time zone
-        setTime((parseInt(minEndTimeString.split("T")[1].split(":")[0]) + 1) + ":" + minEndTimeString.split("T")[1].split(":")[1])
-
-        console.log(minEndTime)
+        setEndDate(minEndTime)
     }
 
     return (
@@ -64,10 +54,8 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
                     {val.name}
                 </div>
             })}
-            <h2 className={styles["timeLabel"]}>Konečné datum:</h2>
-            <div className={styles["timeData"]}>{date ? date : "No end date"}</div>
             <h2 className={styles["timeLabel"]}>Konečný čas:</h2>
-            <div className={styles["timeData"]}>{time ? time : "No end time"}</div>
+            <div className={styles["timeData"]}>{endDate ? new Date(endDate).toLocaleString() : "No end time"}</div>
             <h2 className={styles["timeLabel"]}>Odpovědi:</h2>
             <div className={styles["timeData"]}>Ano/Ne</div>
             <br />
@@ -78,18 +66,12 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
                         return
                     }
 
-                    if (!date || !time) {
+                    if (!endDate) {
                         alert("Nezadal si část víkendu!")
                         return
                     }
-                    var localTime = time
 
-                    if (time.split(":")[0].length === 1) {
-                        localTime = "0" + time
-                        // setTime(localTime)
-                    }
-
-                    const body = { question, selectedPredictionID, endTime: new Date(`${date}T${localTime}:00.000`).toISOString(), selectedWeekendParts: allWeekendParts.map((val) => { return { id: val.id } }).filter((val, id) => { return selectedWeekendParts[id] }) }
+                    const body = { question, selectedPredictionID, endTime: new Date(endDate).toISOString(), selectedWeekendParts: allWeekendParts.map((val) => { return { id: val.id } }).filter((val, id) => { return selectedWeekendParts[id] }) }
 
                     const result = await fetch(`/api/f1/createQuestion`, {
                         method: 'POST',
