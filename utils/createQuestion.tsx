@@ -6,16 +6,18 @@ import { useState } from "react"
 import { weekendPart } from "../pages/api/f1/getQuestions"
 import styles from '../styles/f1.module.css'
 import Settings from "./Settings"
+import { useLanguage } from "../states/useLanguage"
+import { Lang } from "./lang"
 
 interface f1Props {
-    langCookie: string
+    lang: number
     selectedPredictionID: number
     getQuestions: (id: number) => Promise<void>
     allWeekendParts: weekendPart[]
 }
 
 
-const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestions, allWeekendParts }) => {
+const Index: NextPage<f1Props> = ({ lang, selectedPredictionID, getQuestions, allWeekendParts }) => {
     const [question, setQuestion] = useState("")
     const [selectedWeekendParts, setSelectedWeekendParts] = useState<boolean[]>(allWeekendParts.map(() => { return false }))
     const [endDate, setEndDate] = useState<null | string>(null)
@@ -39,10 +41,10 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
 
     return (
         <div className="flex flex-column flex-center">
-            <h1 className={styles["title"]}>Formulky Vytvareni Otazek</h1>
-            <h2>Otázka:</h2>
+            <h1 className={styles["title"]}>{Lang(lang, ["F1 Question Creation", "Formulky Vytvareni Otazek"])}</h1>
+            <h2>{Lang(lang, ["Question:", "Otázka:"])}</h2>
             <input value={question} onChange={(event) => { setQuestion(event.target.value) }} type="text" className="text-input" />
-            <h2>Vyber na které části závodu se otázka vztahuje:</h2>
+            <h2>{Lang(lang, ["Select for what sessions is the question connected to:", "Vyber na které části závodu se otázka vztahuje:"])}</h2>
             {allWeekendParts.map((val, id) => {
                 return <div key={id}>
                     <input type="checkbox" name={val.name} id={val.id.toString()} onChange={(event) => {
@@ -54,20 +56,20 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
                     {val.name}
                 </div>
             })}
-            <h2 className={styles["timeLabel"]}>Konečný čas:</h2>
-            <div className={styles["timeData"]}>{endDate ? new Date(endDate).toLocaleString() : "No end time"}</div>
-            <h2 className={styles["timeLabel"]}>Odpovědi:</h2>
-            <div className={styles["timeData"]}>Ano/Ne</div>
+            <h2 className={styles["timeLabel"]}>{Lang(lang, ["End time:", "Konečný čas:"])}</h2>
+            <div className={styles["timeData"]}>{endDate ? new Date(endDate).toLocaleString() : Lang(lang, ["No end time", "Vyber konečný čas"])}</div>
+            <h2 className={styles["timeLabel"]}>{Lang(lang, ["Answers:", "Odpovědi:"])}</h2>
+            <div className={styles["timeData"]}>{Lang(lang, ["Yes/No", "Ano/Ne"])}</div>
             <br />
             <button onClick={async () => {
                 try {
                     if (!question) {
-                        alert("Nezadal si otázku!")
+                        alert(Lang(lang, ["You did't enter the question", "Nezadal si otázku!"]))
                         return
                     }
 
                     if (!endDate) {
-                        alert("Nezadal si část víkendu!")
+                        alert(Lang(lang, ["You didn't specify the part of the weekend", "Nezadal si část víkendu!"]))
                         return
                     }
 
@@ -81,7 +83,7 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
 
                     if (result.ok) {
                         getQuestions(selectedPredictionID)
-                        alert("Otazka vytvorena!")
+                        alert(Lang(lang, ["Question created!", "Otazka vytvorena!"]))
                         setQuestion("")
                     }
                     else {
@@ -95,10 +97,10 @@ const Index: NextPage<f1Props> = ({ langCookie, selectedPredictionID, getQuestio
                         }
                     }
                 } catch (error) {
-                    alert("Some data is missing!")
+                    alert(Lang(lang, ["Some data is missing!", "Některá data chybí"]))
                     console.error(error)
                 }
-            }}>Potvrdit vytváření!</button>
+            }}>{Lang(lang, ["Create question!", "Vytvořit otázku!"])}</button>
             <br />
         </div>
     )

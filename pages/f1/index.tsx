@@ -41,7 +41,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
     const [selectedArray, setSelectedArray] = useState<number[]>([])
     const [questions, setQuestions] = useState<Question[] | null>(dbQuestions)
     const [selectingPrediction, setSelectingPrediction] = useState(true)
-    const [predictionName, setPredictionName] = useState("Select GP!");
+    const [predictionName, setPredictionName] = useState("select");
     const [allWeekendParts, setAllWeekendParts] = useState<weekendPart[]>([])
     //beacause react doesnt update button classes without running this function :)
     const classesF = () => {
@@ -63,6 +63,8 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
         setRawSelectedPredictionID(id)
         await getQuestions(id)
     }
+
+    const noSelectedPredictionString = Lang(lang, ["Select GP!", "Vyber závod!"])
 
     const getQuestions = async (id: number) => {
         const result = await fetch(`/api/f1/getQuestions`, {
@@ -125,10 +127,9 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                     {/* <Image className={styles["hamburger"]} src={hamburger} alt="hamburgermenu" /> */}
                     <LanguageSelect lang={lang} setLang={setLang} />
                 </div>
-                <h1 onClick={() => { setSelectingPrediction(!selectingPrediction); setPredictionName("Select GP!") }}
+                <h1 onClick={() => { setSelectingPrediction(!selectingPrediction); setPredictionName("select") }}
                     className={styles["title"]}>
-                    {/* {`F1 - ${predictionTypes.find((val) => { return val.id === selectedPredictionID })?.name}`} */}
-                    {`F1 - ${predictionName}`}
+                    {`F1 - ${predictionName === "select" ? noSelectedPredictionString : predictionName}`}
                 </h1>
                 <div className={styles["navSideElement"]}>
                     <UserProfile session={session} />
@@ -200,7 +201,7 @@ const Index: NextPage<f1Props> = ({ langCookie, dbQuestions, predictionTypes }) 
                         {/* <Link passHref href={"/f1/createQuestion"}>
                             <button onClick={() => { }}>Create New Question!</button>
                         </Link> */}
-                        <CreateQuestion allWeekendParts={allWeekendParts} langCookie={langCookie} selectedPredictionID={selectedPredictionID} getQuestions={getQuestions} />
+                        <CreateQuestion allWeekendParts={allWeekendParts} lang={lang} selectedPredictionID={selectedPredictionID} getQuestions={getQuestions} />
                     </div> :
                     //Selecting
                     <div className={styles["predictionTypeContainer"]}>
