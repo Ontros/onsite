@@ -95,7 +95,16 @@ const Home: NextPage<homeProps> = ({ langCookie }) => {
         redirect: '/bakalari'
       }]
     },
-  ]
+    {
+      title: ['Comeback guessr', 'Comeback guessr'],
+      description: ['Guess the comeback episode from a single frame', 'Uhodni comeback epizodu z jednoho obrázku'],
+      buttons: [{
+        text: ['Take a look', 'Zobrazit stránku'],
+        redirect: '/comeback'
+      }
+      ]
+    }
+  ];
 
   return (
     <div className={"container"}>
