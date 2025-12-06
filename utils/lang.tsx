@@ -1,7 +1,5 @@
 //2.1.2021
 
-import FlagCZ from '/public/cz.svg'
-import FlagGB from '/public/gb.svg'
 import Image from 'next/image'
 
 import styles from '../styles/Lang.module.css';
@@ -28,11 +26,11 @@ function LanguageSelect(props: LangProps) {
 
     var languages = [{
         name: 'English',
-        flag: FlagGB
+        flag: '/gb.svg'
     },
     {
         name: 'Česky',
-        flag: FlagCZ
+        flag: '/cz.svg'
     }
     ]
 
