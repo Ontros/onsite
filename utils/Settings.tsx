@@ -32,7 +32,7 @@ export default function Settings(props: Props) {
 
     const [keyPath, setKeyPath] = useState(localStorage.getItem('keyUrl') || '')
 
-    const nextKeysRow = useRef()
+    const nextKeysRow = useRef(null)
 
     // Can enter text
     var isSwitchable = typeof config.isSwitchable === "undefined" ? true : config.isSwitchable
@@ -109,7 +109,6 @@ export default function Settings(props: Props) {
                     </>
                 }
                 <div className={styles.textInputTitle}>{Lang(lang, ["Skip to next question by:", "Přeskoč na další otázku pomocí:"])}</div>
-                {/*@ts-expect-error */}
                 <div className="settings-row space-around" ref={nextKeysRow}>
                     <label className="radio-container">
                         <input onChange={updateNextKeys} className="radio" type="checkbox" defaultChecked={nextKeys.indexOf("Enter") !== -1} />Enter
