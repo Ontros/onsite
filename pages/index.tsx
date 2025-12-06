@@ -125,18 +125,18 @@ const Home: NextPage<homeProps> = ({ langCookie }) => {
                   <p>{Lang(lang, project.description)}</p>
                   <div className='redirect-button-container'>
                     {project.buttons.map((button, i) => {
-                      return (<Link passHref href={button.redirect} key={i}><button>{Lang(lang, button.text)}</button></Link>)
+                      return (<Link href={button.redirect} key={i}><button>{Lang(lang, button.text)}</button></Link>);
                     })}
                   </div>
                 </>
-              </a>)
+              </a>
+            );
           })}
 
         </div>
       </main>
-
     </div>
-  )
+  );
 }
 
 Home.getInitialProps = getCookieProp

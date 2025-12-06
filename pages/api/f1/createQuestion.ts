@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Discord, { IntentsBitField } from 'discord.js'
 import prisma from '../../../utils/prisma'
-import { unstable_getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]'
 
 // POST /api/post
@@ -10,7 +10,7 @@ import { authOptions } from '../auth/[...nextauth]'
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
     //TODO: verify endTime
     const { question, selectedPredictionID, endTime, selectedWeekendParts } = req.body
-    const session = await unstable_getServerSession(req, res, authOptions)
+    const session = await getServerSession(req, res, authOptions)
     if (!session?.user?.email) {
         res.status(400).json({ message: "You are not logged in!" })
         return

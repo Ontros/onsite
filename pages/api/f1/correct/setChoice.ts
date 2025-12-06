@@ -1,14 +1,14 @@
 import { F1Choice, F1ChoiceType } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '../../../../utils/prisma'
-import { unstable_getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../../auth/[...nextauth]'
 
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
     const { choiceTypeId, predictionTypeID }: { choiceTypeId: number, predictionTypeID: number } = req.body
 
-    const session = await unstable_getServerSession(req, res, authOptions)
+    const session = await getServerSession(req, res, authOptions)
     if (session?.user?.email != "ontro512@gmail.com") {
         res.status(400).json("insuffiecient permission")
         return

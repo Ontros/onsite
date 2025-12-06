@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { Currency } from '@prisma/client'
 import prisma from '../../../utils/prisma'
-import { unstable_getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]'
 
 
@@ -10,7 +10,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
     const { description, amount }: { userEmail: string, description: string, amount: number, } = req.body
 
-    const session = await unstable_getServerSession(req, res, authOptions)
+    const session = await getServerSession(req, res, authOptions)
     if (!session?.user?.email) {
         res.status(400).json("You are not logged in!")
         return
