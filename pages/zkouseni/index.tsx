@@ -26,12 +26,14 @@ export type Config = {
 }
 
 const wrongURL = (lang: number) => {
-    alert(Lang(lang, ["Something is wrong with the URL you entered (or you might be offline)", "Něco je špatně se zadanou URL (nebo mohl spadnout internet)"]))
+    console.log(lang)
+    alert("Something is wrong with the URL you entered (or you might be offline)")
     // window.location.reload()
 }
 
 function loadKeys(lang: number, path: string, setKey: (arg0: Questionaire) => void, setIsLoading: (arg0: boolean) => void) {
-    fetch(path).then((data) => {
+    console.log(path)
+    fetch(path, { mode: "no-cors" }).then((data) => {
         data.json().then((json) => {
             if (!json.key1 || !json.key2 || !json.keys) {
                 wrongURL(lang)
@@ -39,8 +41,8 @@ function loadKeys(lang: number, path: string, setKey: (arg0: Questionaire) => vo
             }
             setIsLoading(true)
             setKey(json)
-            localStorage.setItem('keyUrl', path)
             setIsLoading(false)
+            localStorage.setItem('keyUrl', path)
         }).catch(wrongURL)
     }).catch(wrongURL)
 
@@ -56,6 +58,7 @@ const App: NextPage<zkouseniProps> = ({ langCookie }) => {
         if (!url) {
             fetch('https://raw.githubusercontent.com/Ontros/zkouseni-keys/main/default.txt').then(response => {
                 response.text().then((url: string) => {
+                    console.log("getting og")
                     loadKeys(lang, url, setKey, setIsLoading);
                 })
             })

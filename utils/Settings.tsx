@@ -34,6 +34,7 @@ export default function Settings(props: Props) {
 
     const nextKeysRow = useRef()
 
+    // Can enter text
     var isSwitchable = typeof config.isSwitchable === "undefined" ? true : config.isSwitchable
 
     console.log(isSwitchable)
@@ -64,6 +65,10 @@ export default function Settings(props: Props) {
 
     const changeKeyPath = (event: any) => {
         setKeyPath(event.target.value)
+    }
+
+    if (!areSettingsOpen) {
+        return <></>
     }
 
     return (

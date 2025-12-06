@@ -4,6 +4,7 @@ import Settings from './Settings'
 import weightedAverage from './weightedAverage'
 import styles from '../styles/Zkouseni.module.css'
 import { Lang } from './lang'
+import { config } from 'process'
 var chyba = (code: string) => {
     alert(`Ondřej to zase posral, tohle by mu snad mělo pomoct opravit tento problém: ${code}`)
 }
@@ -22,6 +23,7 @@ export default function Selection(props: Props) {
     //Get vars from props
     const { questionaire, loadKeys, lang, setLang } = props
     console.log(questionaire)
+    var ankiMode = !questionaire.config.allowCustomAnswers && questionaire.config.predefinedAnswers?.length === 0;
 
     //Defaultni data pro state
     var getBaseResults = (number: number) => {
